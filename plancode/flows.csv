@@ -1,0 +1,7 @@
+headings,iron,coal,corn,bread
+iron,0.1,0,0,0
+coal,2,1,0.04,0.2
+corn,0,0,1,1
+bread,0,0,0,0
+labour,0.3,1,2,0.1
+output,10,5,10,1
