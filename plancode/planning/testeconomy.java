@@ -1,22 +1,21 @@
 package planning;
 import java.io.*;
 import java.util.*;
+/** this generates test economies of varying sizes for testing
+  *  the planning software
+  *  Usage : java planing.testeconomy <number of sectors> */
 class testeconomy {
-    /** this generates test economies of varying sizes for testing
-    the planning software
-    Usage : java planing.testeconomy <number of sectors>
 
-    */
     static int sectors=1;
     static Random r=new Random();
     static double depr=0.07;
     static float [] netuse;
     static final double ln2 =Math.log(2);
     static int ranlogn(int sectors) {
-		double l2of=Math.log(sectors)/ln2;
+        double l2of=Math.log(sectors)/ln2;
         if (r.nextInt(sectors)<(l2of+5)) return r.nextInt();
-         return 0;
-         
+        return 0;
+
     }
     public static void main(String[] args) {
         int row,col,totl;
@@ -84,16 +83,17 @@ class testeconomy {
             }
             flows.println("");
             double scale =0.9;
-            for(int year=1;year<=years;year++){
-				targ.print("year"+year);
-				for(col=0;col<sectors;col++){
-					targ.print(","+((int)(scale*netuse[col])));
-					netuse[col]*=1.03;				}
-				targ.println(","+totl);
-				
-				
-				totl=(int)(totl*1.02);
-			}
+            for(int year=1; year<=years; year++) {
+                targ.print("year"+year);
+                for(col=0; col<sectors; col++) {
+                    targ.print(","+((int)(scale*netuse[col])));
+                    netuse[col]*=1.03;
+                }
+                targ.println(","+totl);
+
+
+                totl=(int)(totl*1.02);
+            }
         } catch( FileNotFoundException nf) {
             System.err.println("Error "+nf);
             System.exit(0);

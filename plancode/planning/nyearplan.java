@@ -1,7 +1,12 @@
 package planning;
 import java.io.*;
 import java.util.*;
-/* A programme to construct 5 year or n year socialist plans
+/** A programme to construct 5 year or n year socialist plans
+ *
+ * It produces an output file of the plan in lp-solve format on standard out<p>
+ * Usage java planning.nyearplan flowmatrix.csv capitalmatrix.csv depreciationmatrix.csv laboursupplyandtargets.csv
+ *
+ * <p>
     Copyright (C) 2018 William Paul Cockshott
 
     This program is free software: you can redistribute it and/or modify
@@ -15,7 +20,7 @@ import java.util.*;
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    along with this program.  If not, see https://www.gnu.org/licenses/.
  * */
 public class nyearplan {
     static final int flow=0,cap=1,dep=2,targ=3;
@@ -90,8 +95,8 @@ public class nyearplan {
             int year;
             System.out.println(maximiser(years));
             for (year=1; year<=years; year++) {
-				// set a target fiven by leontief demand for year
-				System.out.println(targeqn(year));
+                // set a target fiven by leontief demand for year
+                System.out.println(targeqn(year));
                 System.out.println(labourtotal(year));
                 // now print out labour supply constraint
                 System.out.println(namelabourfor(year)+"\t<=\t" +matrices[targ][year][labourRow()]+";");;
@@ -105,8 +110,7 @@ public class nyearplan {
                         System.out.println(namedep(product,stock,year)+" =\t"+matrices[dep][stock][product]+" "+namecap(product,stock,year)+";");
                         if (year>1) {
                             System.out.println(accumulationconstraint(product,stock,year));
-                        }
-                        else { // set initial capital stocks
+                        } else { // set initial capital stocks
                             System.out.println(namecap(product,stock,year)+"\t<=\t"+ matrices[cap][stock][product]+";");
                         }
                     }
@@ -118,22 +122,24 @@ public class nyearplan {
                 }
             }
         }
-    } 
-    static String maximiser(int years){
-		String s="  max:\t"+nametarget(1);
-		for (int i =2;i<=years;i++) s+= (" +\t"+nametarget(i));
-		return s+";";
-	}
-	static double gettargnorm(int year){
-		double total=0;
-		for(int i=1;i<=maxprod;i++) total = total +(matrices[targ][year][i]*matrices[targ][year][i]);
-		return Math.sqrt(total);}
-    static String targeqn(int year){
-		
-		String s= "";
-		 for (int i=1; i<=maxprod; i++)if(matrices[targ][year][i]>0)s= s +
-		 nametarget(year)+" <=\t"+( 1/matrices[targ][year][i] )+ " "+nameconsumption(i,year)+";\n";
-		 return s ;}
+    }
+    static String maximiser(int years) {
+        String s="  max:\t"+nametarget(1);
+        for (int i =2; i<=years; i++) s+= (" +\t"+nametarget(i));
+        return s+";";
+    }
+    static double gettargnorm(int year) {
+        double total=0;
+        for(int i=1; i<=maxprod; i++) total = total +(matrices[targ][year][i]*matrices[targ][year][i]);
+        return Math.sqrt(total);
+    }
+    static String targeqn(int year) {
+
+        String s= "";
+        for (int i=1; i<=maxprod; i++)if(matrices[targ][year][i]>0)s= s +
+                        nametarget(year)+" <=\t"+( 1/matrices[targ][year][i] )+ " "+nameconsumption(i,year)+";\n";
+        return s ;
+    }
     static String productiveconsumption(int product, int year) {
         String s=nameproductiveconsumption(product,year)+"\t>=\t"+nameflow(1,product,year);
         for (int i=2; i<=maxprod; i++)s= s +" +\t"  +nameflow(i,product,year);
@@ -187,7 +193,7 @@ public class nyearplan {
     }
     static String namelabourfor( int product, int year) {
         return "labourFor"+colheads[flow][product]+year;
-    } 
+    }
     static String namelabourfor(  int year) {
         return "labourForYear"+ year;
     }
@@ -207,8 +213,10 @@ public class nyearplan {
     }
     static String nameconsumption(int product,   int year) {
         return "finalConsumptionOf"+colheads[flow][product]+year  ;
-    } 
-    static String nametarget(int year){return "targetFulfillmentForYear"+year;}
+    }
+    static String nametarget(int year) {
+        return "targetFulfillmentForYear"+year;
+    }
     static String nameproductiveconsumption(int product,   int year) {
         return "productiveConsumptionOf"+colheads[flow][product]+year  ;
     }
@@ -221,7 +229,7 @@ public class nyearplan {
     static String namecap(int product, int input, int year) {
         return "capitalstockFor"+colheads[flow][product]+"MadeUpOf"+colheads[flow][input]+year;
     }
-   
+
     static int countyears(String[]heads) {
         int j=0,i;
         for(i=0; i<heads.length; i++)
