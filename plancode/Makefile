@@ -1,7 +1,10 @@
 all:   planning/nyearplan.class plan.txt test.txt
 
 test.txt: planning/nyearplan.class planning/testeconomy.class testrun.sh
-	bash testrun.sh 12 2
+	bash testrun.sh 4 2
+
+harmony.txt: planning/nyearplan.class planning/testeconomy.class testharmony.sh planning/nyearHarmony.class testharmony.sh Makefile
+	bash testharmony.sh 3 3
 
 planning/csvfilereader.class: planning/csvfilereader.java planning/pcsv.java
 	javac planning/csvfilereader.java
@@ -20,5 +23,11 @@ plan.txt: model.lp
 model.lp:planning/nyearplan.class flows.csv cap.csv dep.csv labtarg.csv Makefile
 	java planning.nyearplan flows.csv cap.csv dep.csv labtarg.csv   >model.lp
 	
+hplan.txt:  planning/nyearplan.class  planning/nyearHarmony.class    Makefile
+	java planning.nyearHarmony flows.csv cap.csv dep.csv labtarg.csv   >hplan.txt
+	
 planning/testeconomy.class:planning/testeconomy.java
 	javac planning/testeconomy.java
+
+planning/nyearHarmony.class:planning/Harmonizer.java planning/TechnologyComplex.java planning/JointProductionTechnique.java planning/nyearHarmony.java
+	javac planning/nyearHarmony.java

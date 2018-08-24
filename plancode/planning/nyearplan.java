@@ -117,7 +117,7 @@ public class nyearplan {
                     System.out.println(labourconstraintfor(product,year));
                     System.out.println(accumulationtotal(product,year));
                     System.out.println(productiveconsumption(product,year));
-                    System.out.println(nameconsumption(product,year)+"\t<=\t"+ nameoutput(product,year) + " - "+nameaccumulation(product ,year)+
+                    System.out.println(nameconsumption(product,year)+"\t<=\t"+ nameoutput(product,year) + " - "+nameaccumulation(product,year)+
                                        "-"+nameproductiveconsumption(product,year)+";");
                 }
             }
@@ -206,6 +206,7 @@ public class nyearplan {
         return s+";";
     }
     static String nameaccumulation(int product, int input, int year) {
+        //   System.out.println("acc "+product+ ","+input+","+year);
         return "accumulationFor"+colheads[flow][product]+"Of"+colheads[flow][input]+year;
     }
     static String nameaccumulation(int product,   int year) {

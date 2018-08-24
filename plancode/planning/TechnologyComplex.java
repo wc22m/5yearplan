@@ -47,6 +47,7 @@ public class TechnologyComplex {
         }
         return userIndex;
     }
+
     /** return a vector indexed by product each of whose elements is a vector of  indices of techniques that make that product */
     public Vector< Vector<Integer> > buildProducerIndex() {
         if(producerIndex==null) {
@@ -56,6 +57,11 @@ public class TechnologyComplex {
             for (int i =0; i<techniqueCount(); i++) {
                 Technique t= techniques.elementAt(i);
                 index.elementAt(t.productCode).add(new Integer(i));
+                if(t instanceof JointProductionTechnique) {
+                    JointProductionTechnique J= (JointProductionTechnique)t;
+                    for (int j=0; j<J.coproductCodes.length; j++)
+                        index.elementAt(J.coproductCodes[j]).add(new Integer(i));
+                }
             }
             producerIndex=index;
             return index;
@@ -72,7 +78,17 @@ public class TechnologyComplex {
         techniques.add(t);
     }
     public void setProductName(int productCode,String productName) {
+
         productIds[productCode]=productName;
+
+    }
+    /** return a comma separated string of all the product and technology names, products first then techniques */
+
+    public String allheadings() {
+        String s="";
+        for(String p:productIds)s+=","+p;
+        for(Technique t:techniques) s+=","+t.getIdentifier() ;
+        return s;
     }
     public int productCount() {
         return productIds.length;

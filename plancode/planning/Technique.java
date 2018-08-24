@@ -39,7 +39,28 @@ public class Technique {
         inputUsage=usage;
         inputCodes=codes;
     }
+    /** tells you the rate of harmony gain per unit of input where both output and input are
+     * measured in contribution to total harmony */
+    public double rateOfHarmonyGain(double[]derivativeOfProductHarmony) {
+        double gain = derivativeOfProductHarmony[ productCode]* grossOutput;
+        double cost=0;
+        for(int j=0; j< inputCodes.length; j++) {
+            cost+=derivativeOfProductHarmony[ inputCodes[j]]* inputUsage[j];
+        }
+        //  System.out.println(identifier+","+productCode+","+gain+","+cost);
+        return (gain-cost)/cost;
+    }
+    static int findiIna(int i, int[] a) {
+        for (int j=0; j<a.length; j++)if(a[j]==i)return j;
+        return -1;
+    }
+    /** return the marginal physical product of the output good in terms
+     * of one extra unit of the input */
+    public double  marginalphysicalproduct(int    input) {
 
+        int pos =findiIna(input,  inputCodes);
+        return  grossOutput/  inputUsage[pos];
+    }
     public int getProductCode() {
         return productCode;
     }

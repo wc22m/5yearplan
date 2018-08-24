@@ -79,14 +79,14 @@ class testeconomy {
 
             for(col=0; col<sectors; col++) {
 
-                flows.print(","+2*((int)netuse[col]));
+                flows.print(","+(1+2*((int)netuse[col])));
             }
             flows.println("");
             double scale =0.9;
             for(int year=1; year<=years; year++) {
                 targ.print("year"+year);
                 for(col=0; col<sectors; col++) {
-                    targ.print(","+((int)(scale*netuse[col])));
+                    targ.print(","+(0.01+ (scale*netuse[col])));
                     netuse[col]*=1.03;
                 }
                 targ.println(","+totl);

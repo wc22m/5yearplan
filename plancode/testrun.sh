@@ -6,5 +6,5 @@
 echo sectors $1 years $2
 wc test.lp  
  
-time lp_solve <test.lp >test.txt 
+time lp_solve <test.lp |sort >test.txt 
 
