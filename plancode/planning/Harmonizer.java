@@ -24,13 +24,13 @@ a Kantorovich style output target and having a pregiven set of initial resources
  * */
 public class Harmonizer {
     static final double useweight = 5;
-    static final double phase2adjust = 0.15 ;
+    static final double phase2adjust = 0.3 ;
     static final double capacitytarget=0.98;
-    static final double startingtemp=0.15;
+    static final double startingtemp=0.23;
     static double meanh=0;
     static boolean phase1rescale=true;
     static boolean phase2rescale=true;
-    static int iters=60;
+    static int iters=80;
     static boolean verbose=false;
     static double [] productHarmony= {};
     /** C is a technology complex, fixed resources should be added as nonproduced products<p>

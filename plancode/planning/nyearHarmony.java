@@ -204,9 +204,11 @@ public class nyearHarmony extends nyearplan {
                     targets[flownum(j,y)]=matrices[targ][y][j];
             if( Harmonizer.verbose)
                 writeln(C.allheadings());
+                long start = System.currentTimeMillis();
             double [] intensities= Harmonizer.balancePlan(  C, targets,  initialResource   );
+             long stop= System.currentTimeMillis();
             printResults(C, intensities, initialResource);
-
+			writeln("took "+((stop-start)*0.001)+" sec");
         }
     }
 
@@ -216,21 +218,33 @@ public class nyearHarmony extends nyearplan {
         writeln("iter,	useweight,	phase2,	temp");
         writeln(" "+Harmonizer.iters+","+Harmonizer.useweight+","+Harmonizer.phase2adjust+","+Harmonizer.startingtemp);
         write("year");
-        writeln(colheads[flow]);
+        writeln(colheads[flow]); 
         double toth=0;
-        for(int year=1; year<=years; year++) {
+       
+        for(int year=1; year<=years; year++) { double []usage = new double [maxprod];double []produced = new double [maxprod+1];
+			
             writeln(""+year+",flow matrix");
             for(int row=1; row<=outputrowinheaders(); row++) {
                 write(""+year);
                 write(","+rowheads[flow][row]);
                 for(int col=1; col<colheads[flow].length; col++) {
                     int index = yearXproductIntensityIndex[year][col];
-                    double howmuch = intensity[index];
-                    write(","+howmuch*matrices[flow][row][col]);
+                    double howmuch = intensity[index]*matrices[flow][row][col];
+                    write(","+howmuch);
+                    if(row<maxprod){usage [row]+= howmuch ;}else
+                    {produced [col]=howmuch;}
                 }
                 writeln("");
             }
-
+ 
+            write(""+year+",");
+            write("productive consumption  ,");writeln(usage);
+              write(""+year+",");
+            write("accumulation ");
+            for(int col=1; col<usage.length; col++) {
+                write (","+(produced[col]-netoutput[flownum(col,year)]-usage[col]));
+            }
+            writeln("");
             write(""+year+",");
             write("netoutput ");
             for(int col=1; col<colheads[flow].length; col++) {

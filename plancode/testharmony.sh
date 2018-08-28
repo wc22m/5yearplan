@@ -1,14 +1,14 @@
  
-# java planning.testeconomy $1 $2
+ java planning.testeconomy $1 $2
  echo harmony alg
-time java planning.nyearHarmony testflow.csv testcap.csv testdep.csv testtarg.csv    >harmony.txt
+time java -Xmx1512m planning.nyearHarmony testflow.csv testcap.csv testdep.csv testtarg.csv    >harmony.txt
  echo prepass to prepare lp
-time  java planning.nyearplan testflow.csv testcap.csv testdep.csv testtarg.csv   >test.lp
+ tail --lines=3 harmony.txt
+#time  java planning.nyearplan testflow.csv testcap.csv testdep.csv testtarg.csv   >test.lp
  
  
 wc test.lp  
  echo lp time
-time lp_solve <test.lp|sort >test.txt 
-
- 
+#time lp_solve <test.lp|sort >test.txt 
+#tail --lines=2 test.txt 
 

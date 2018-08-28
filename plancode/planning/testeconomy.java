@@ -46,7 +46,7 @@ class testeconomy {
                 cap.print(heading(row));
                 dep.print(heading(row));
                 flows.print(heading(row));
-                netuse[row]=0;
+                netuse[row]=1;
                 for (col=0; col<sectors; col++) {
                     dep.print(","+depr);
                     int R= ranlogn(sectors);
@@ -79,15 +79,15 @@ class testeconomy {
 
             for(col=0; col<sectors; col++) {
 
-                flows.print(","+(1+2*((int)netuse[col])));
+                flows.print(","+((1.8+Math.random())*((int)netuse[col])));
             }
             flows.println("");
-            double scale =0.9;
+            double scale =0.75;
             for(int year=1; year<=years; year++) {
                 targ.print("year"+year);
                 for(col=0; col<sectors; col++) {
                     targ.print(","+(0.01+ (scale*netuse[col])));
-                    netuse[col]*=1.03;
+                    netuse[col]*=1.01;
                 }
                 targ.println(","+totl);
 
