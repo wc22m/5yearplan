@@ -24,6 +24,7 @@ import java.util.*;
     * 
  * */
 public class nyearHarmony extends nyearplan {
+	
     static int years;
     static   TechnologyComplex C ;
     static int[][] relativecapnum;// since the matrix is sparse we allocate a distinct product
