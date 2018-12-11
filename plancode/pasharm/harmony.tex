@@ -1,0 +1,835 @@
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{unit}  \textit{harmony} ;}}\\
+\end{tabbing}
+A class to optimise a set of linear production technologies to meet
+a Kantorovich style output target and having a pregiven set of initial resources.<p>
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\end{tabbing}
+It produces an output file of the plan in lp-solve format on standard out<p>
+Class to provide optimisation of plans using the algorithm in Towards a New Socialism
+<p>
+Copyright (C) 2018 William Paul Cockshott
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\end{tabbing}
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\end{tabbing}
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\end{tabbing}
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see https://www.gnu.org/licenses/.
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\+\parbox{14cm}{\textsf{\textbf{interface} }}\\
+\+\parbox{14cm}{\textsf{\textbf{uses}  \textit{technologies} ;}}\\
+\<\textsf{\textbf{function}  \textit{H} \textit{(}  \textit{target} ,  \textit{netoutput} :\textit{real} ) :\textit{real} ;} (see Section \ref{sec:harmonyH} )\\
+\\
+\<\textsf{\textbf{function}  \textit{dH} \textit{(} \textit{target} ,  \textit{netoutput} :\textit{real} ) :\textit{real} ;} (see Section \ref{sec:harmonydH} )\\
+\<\parbox{14cm}{\textsf{\textbf{const} }}\\
+\parbox{14cm}{\textsf{\textit{useweight} :\textit{real}  = 5;}}\\
+\parbox{14cm}{\textsf{\textit{phase2adjust} :\textit{real}  = 0.3 ;}}\\
+\parbox{14cm}{\textsf{\textit{capacitytarget} :\textit{real} =0.98;}}\\
+\parbox{14cm}{\textsf{\textit{startingtemp} :\textit{real} =0.23;}}\\
+\parbox{14cm}{\textsf{\textit{meanh} :\textit{real} =0;}}\\
+\parbox{14cm}{\textsf{\textit{phase1rescale} :\textit{boolean} =\textbf{true} ;}}\\
+\parbox{14cm}{\textsf{\textit{phase2rescale} :\textit{boolean} =\textbf{true} ;}}\\
+\parbox{14cm}{\textsf{\textit{iters} :\textit{integer} =80;}}\\
+\parbox{14cm}{\textsf{\textit{verbose} :\textit{boolean} =\textbf{true} ;}}\\
+\\
+\<\textsf{\textbf{function}  \textit{balancePlan} \textit{(}   \textbf{var}   \textit{planTargets} , \textit{initialresource} :\textit{vector} ;\textbf{var}  \textit{C} :\textit{technologycomplex}  ):\textit{pvec} ;} (see Section \ref{sec:harmonybalancePlan} )\\
+\\
+\<\textsf{\textbf{procedure}  \textit{printstateS} \textit{(} \textbf{var}  \textit{netOutput} ,\textit{productHarmonyDerivatives} ,\textit{productHarmony} :\textit{vector} ;} (see Section \ref{sec:harmonyprintstateS} )\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{C} $\in$ TechnologyComplex ;}}\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{intensity} $\in$ vector);}}\\
+\<\textsf{\textbf{function}  \textit{mean} \textit{(} \textbf{var}   \textit{m} :\textit{vector} ; \textbf{var}  \textit{C} :\textit{TechnologyComplex}    ):\textit{real} ;} (see Section \ref{sec:harmonymean} )\\
+\<\textsf{\textbf{function}  \textit{nonfinalHarmonyDerivativeMax} \textit{(} \textbf{var}  \textit{netOutput} :\textit{vector} ;  \textit{nonfinal} :\textit{integer} ;\textbf{var}  \textit{dharmonies} :\textit{vector} ;\textbf{var}  \textit{C} :\textit{TechnologyComplex}   ):\textit{real} ;} (see Section \ref{sec:harmonynonfinalHarmonyDerivativeMax} )\\
+\<\textsf{\textbf{function}  \textit{computeGrossAvail} \textit{(} \textbf{var}  \textit{C} :\textit{TechnologyComplex}  ;\textbf{var}     \textit{intensity} , \textit{initial} :\textit{vector} ):\textit{pvec} ;} (see Section \ref{sec:harmonycomputeGrossAvail} )\\
+\<\textsf{\textbf{function}  \textit{computeNetOutput} \textit{(} \textbf{var}  \textit{C} :\textit{TechnologyComplex}  ; \textbf{var}   \textit{intensity} ,\textit{initial} :\textit{vector}  ):\textit{pvec} ;} (see Section \ref{sec:harmonycomputeNetOutput} )\\
+\<\textsf{\textbf{procedure}  \textit{rescaleIntensity} \textit{(} \textbf{var}  \textit{intense} :\textit{vector} ;\textbf{var}  \textit{C} :\textit{TechnologyComplex}  ; \textbf{var}  \textit{initialresource} :\textit{vector} );} (see Section \ref{sec:harmonyrescaleIntensity} )\\
+\<\textsf{\textbf{function}  \textit{sigmoid} \textit{(}   \textit{d} :\textit{real} ):\textit{real} ;} (see Section \ref{sec:harmonysigmoid} )\\
+\<\textsf{\textbf{procedure}  \textit{initialiseIntensities} \textit{(} \textbf{var}  \textit{intensity} :\textit{vector} ;\textit{C} :\textit{TechnologyComplex}  ;\textbf{var}  \textit{initialresource}  :\textit{vector} );} (see Section \ref{sec:harmonyinitialiseIntensities} )\\
+\<\textsf{\textbf{procedure}   \textit{equaliseHarmony} \textit{(}  \textbf{var}  \textit{intensity} ,} (see Section \ref{sec:harmonyequaliseHarmony} )\\
+\parbox{14cm}{\textsf{\textit{derivativeOfProductHarmony} ,}}\\
+\parbox{14cm}{\textsf{Let \textit{netproduct} $\in$ vector;}}\\
+\parbox{14cm}{\textsf{Let \textit{temperature} $\in$ real;}}\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{C} $\in$ TechnologyComplex ;}}\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{h} $\in$ vector;}}\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{index} $\in$ pdvec;}}\\
+\<\parbox{14cm}{\textsf {\textbf {var } \textsf{Let \textit{initialresource} $\in$ vector );}}}\\
+\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{productHarmony} $\in$ pvec;}}\\
+\\
+\<\parbox{14cm}{\textsf{\textbf{implementation} }}\\
+\<\textsf{\textbf{procedure}  \textit{rescaleIntensity} \textit{(} \textbf{var}  \textit{intense} :\textit{vector} ;\textbf{var}  \textit{C} :\textit{TechnologyComplex}  ; \textbf{var}  \textit{initialresource} :\textit{vector} );} (see Section \ref{sec:harmonyrescaleIntensity} )\\
+\\
+\\
+\end{tabbing}
+the derivative of the harmony function
+* evaluated numerically so as to be independent of the H function
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \+ \\
+\<\textsf{\textbf{function}  \textit{fdH} \textit{(} \textit{target} ,  \textit{netoutput} :\textit{real} ) :\textit{real} ;} (see Section \ref{sec:harmonyfdH} )\\
+\\
+\<\textsf{\textbf{function}  \textit{H} \textit{(}  \textit{target} ,  \textit{netoutput} :\textit{real} ) :\textit{real} ;} (see Section \ref{sec:harmonyH} )\\
+\end{tabbing}
+Forward procedure declarations
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \+ \\
+\<\textsf{\textbf{function}  \textit{meanv} \textit{(} \textbf{var}  \textit{m} :\textit{vector}   ):\textit{real} ;} (see Section \ref{sec:harmonymeanv} )\\
+\parbox{14cm}{\textsf{\textit{forward}}; }\\
+\<\textsf{\textbf{function}  \textit{computeHarmonyDerivatives} \textit{(} \textbf{var}  \textit{netOutput} , \textit{planTargets} :\textit{vector} ;\textit{C} :\textit{TechnologyComplex} ;\textbf{var}  \textit{intentsity} :\textit{vector} ):\textit{pvec}  ;} (see Section \ref{sec:harmonycomputeHarmonyDerivatives} )\\
+\parbox{14cm}{\textsf{\textit{forward}}; }\\
+\\
+\\
+\end{tabbing}
+gives the vector of total amount produced or available in initial resource vector - does not deduct productive consumption
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \+ \\
+\<\textsf{\textbf{function}  \textit{computeGrossAvail} \textit{(} \textbf{var}  \textit{C} :\textit{TechnologyComplex}  ;\textbf{var}     \textit{intensity} , \textit{initial} :\textit{vector} ):\textit{pvec} ;} (see Section \ref{sec:harmonycomputeGrossAvail} )\\
+\\
+\\
+\\
+\end{tabbing}
+C is a technology complex, fixed resources should be added as nonproduced products<p>
+planTargets is the target output of each product<p>
+returns a vector of technology intensities
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \+ \\
+\<\textsf{\textbf{function}  \textit{balancePlan} \textit{(}   \textbf{var}   \textit{planTargets} , \textit{initialresource} :\textit{vector}  ;\textbf{var}  \textit{C} :\textit{technologycomplex} ):\textit{pvec} ;} (see Section \ref{sec:harmonybalancePlan} )\\
+\end{tabbing}
+compute the derivatives of the harmonies of all products with repect to marginal increase in output in terms of
+actual output units not intensities
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \+ \\
+\<\textsf{\textbf{function}  \textit{computeHarmonyDerivatives} \textit{(} \textbf{var}  \textit{netOutput} , \textit{planTargets} :\textit{vector} ;\textit{C} :\textit{TechnologyComplex} ;\textbf{var}  \textit{intentsity} :\textit{vector} ):\textit{pvec}  ;} (see Section \ref{sec:harmonycomputeHarmonyDerivatives} )\\
+\\
+\<\textsf{\textbf{procedure}  \textit{printstateS} \textit{(} \textbf{var}  \textit{netOutput} ,\textit{productHarmonyDerivatives} ,\textit{productHarmony} :\textit{vector} ;\textbf{var}  \textit{C} :\textit{TechnologyComplex}  ;\textbf{var}  \textit{intensity} :\textit{vector} );} (see Section \ref{sec:harmonyprintstateS} )\\
+\\
+\end{tabbing}
+for non final goods we make derivatives their harmonies the maximum of the derivatives of the harmonies of their users
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \+ \\
+\<\textsf{\textbf{function}  \textit{nonfinalHarmonyDerivativeMax} \textit{(} \textbf{var}  \textit{netOutput} :\textit{vector} ;  \textit{nonfinal} :\textit{integer} ;\textbf{var}  \textit{dharmonies} :\textit{vector} ;\textbf{var}  \textit{C} :\textit{TechnologyComplex}   ):\textit{real} ;} (see Section \ref{sec:harmonynonfinalHarmonyDerivativeMax} )\\
+\\
+\<\textsf{\textbf{function}  \textit{mean} \textit{(} \textbf{var}   \textit{m} :\textit{vector} ;\textbf{var}  \textit{C} :\textit{TechnologyComplex}   ):\textit{real} ;} (see Section \ref{sec:harmonymean} )\\
+\<\textsf{\textbf{function}  \textit{sdev} \textit{(} \textbf{var}   \textit{m} :\textit{vector} ;\textbf{var}  \textit{C} :\textit{TechnologyComplex}   ):\textit{real} ;} (see Section \ref{sec:harmonysdev} )\\
+\<\textsf{\textbf{function}  \textit{meanv} \textit{(} \textbf{var}  \textit{m} :\textit{vector}   ):\textit{real} ;} (see Section \ref{sec:harmonymeanv} )\\
+\<\textsf{\textbf{function}   \textit{stdev} \textit{(} \textbf{var}  \textit{m} :\textit{vector} ;  \textit{av} :\textit{real} ) :\textit{real} ;} (see Section \ref{sec:harmonystdev} )\\
+\\
+\end{tabbing}
+shrink or expand all industries in order to not exceed target level of use of the critical fixed reource
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \+ \\
+\\
+\<\textsf{\textbf{procedure}  \textit{initialiseIntensities} \textit{(} \textbf{var}  \textit{intensity} :\textit{vector} ;\textit{C} :\textit{TechnologyComplex}  ;\textbf{var}  \textit{initialresource}  :\textit{vector} );} (see Section \ref{sec:harmonyinitialiseIntensities} )\\
+\<\textsf{\textbf{procedure}   \textit{equaliseHarmony} \textit{(}  \textbf{var}  \textit{intensity} ,} (see Section \ref{sec:harmonyequaliseHarmony} )\\
+\\
+\\
+\<\textsf{\textbf{function}  \textit{computeNetOutput} \textit{(} \textbf{var}  \textit{C} :\textit{TechnologyComplex}  ;\textbf{var}  \textit{intensity} ,\textit{initial} :\textit{vector} ):\textit{pvec} ;} (see Section \ref{sec:harmonycomputeNetOutput} )\\
+\<\textsf{\textbf{function}  \textit{sigmoid} \textit{(}   \textit{d} :\textit{real} ):\textit{real} ;} (see Section \ref{sec:harmonysigmoid} )\\
+\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} .}}\\
+\end{tabbing}
+\section{rescaleIntensity}\label{sec:harmonyrescaleIntensity}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{rescaleIntensity} \textit{(} \textbf{var}  \textit{intense} :\textit{vector} ;\textbf{var}  \textit{C} :\textit{TechnologyComplex}  ; \textbf{var}  \textit{initialresource} :\textit{vector} );}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{netoutput} $\in$ pvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{amountused}, \textit{shortfallratio}, \textit{maxfrac}, \textit{resource}, \textit{usage}, \textit{fractionaluse}, \textit{expansionratio}, \textit{weight} $\in$ real;}}\\
+\parbox{14cm}{\textsf{Let \textit{i}, \textit{j} $\in$ integer;}}\\
+\parbox{14cm}{\textsf{Let \textit{grossAvail}, \textit{shrinkby} $\in$ pvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{users}, \textit{pt} $\in$ ptvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{t} $\in$ ptechnique;}}\\
+\parbox{14cm}{\textsf{Let \textit{allpositive} $\in$ boolean;}}\\
+\parbox{14cm}{\textsf{Let \textit{ui} $\in$ pdvec;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{netoutput}$\leftarrow$ \textit{computeNetOutput} (\textit{C}, \textit{intense}, \textit{initialresource})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{verbose})} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `post phase0' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `netoutput' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{netoutput}$\uparrow$\textit{})}; }\\
+\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{maxfrac}$\leftarrow$ 0}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{C.nonproduced}$\uparrow$.\textit{max}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{C.nonproduced}$\uparrow$\textit{}[i])} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{resource}$\leftarrow$ \textit{initialresource}$_{\textit{i}}$}; }\\
+\parbox{14cm}{\textsf{\textit{usage}$\leftarrow$ \textit{resource} - \textit{netoutput}$\uparrow$\textit{}[i]}; }\\
+\parbox{14cm}{\textsf{\textit{fractionaluse}$\leftarrow$ $\frac{\textit{usage}}{\textit{resource}}$}; }\\
+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{fractionaluse} $>$ \textit{maxfrac})} \textbf{ then } \textsf{\textit{maxfrac}$\leftarrow$ \textit{fractionaluse}}; }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{expansionratio}$\leftarrow$ $\frac{\textit{capacitytarget}}{\textit{maxfrac}}$}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{phase1rescale})} \textbf{ then } }}\\
+\parbox{14cm}{\textsf{// \textit{expand}  \textit{overall}  \textit{scale}  \textbf{of}  \textit{production}  \textbf{to}  \textit{balance} }}\\
+\-\-\parbox{14cm}{\textsf{\textit{intense}$\leftarrow$ \textit{expansionratio} $\times$ \textit{intense}}; }\\
+\parbox{14cm}{\textsf{// \textbf{writeln} \textit{(} \textrm{\textup { `dispose(netoutput)' } });}}\\
+\parbox{14cm}{\textsf{\textbf{dispose} \textit{(} \textit{netoutput} );}}\\
+\parbox{14cm}{\textsf{// \textit{now}  \textit{make}  \textit{sure}  \textit{no}  \textit{other}  \textit{resource}  \textit{has}  \textit{a}  \textit{negative}  \textit{output} }}\\
+\parbox{14cm}{\textsf{\textit{netoutput}$\leftarrow$ \textit{computeNetOutput} (\textit{C}, \textit{intense}, \textit{initialresource})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{verbose})} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `post phase1' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `netoutput' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{netoutput}$\uparrow$\textit{})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `intensity' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{intense})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{allpositive}$\leftarrow$ \textbf{ $\backslash \wedge$  } ((\textit{netoutput}$\uparrow$\textit{}) $\geq$ 0) }; }\\
+\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textbf{not} \textit{allpositive} )} \textbf{ then } }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{phase2rescale})} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{ui}$\leftarrow$ \textit{buildUserIndex} (\textit{C})}; }\\
+\parbox{14cm}{\textsf{\textit{grossAvail}$\leftarrow$ \textit{computeGrossAvail} (\textit{C}, \textit{intense}, \textit{initialresource})}; }\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{shrinkby} , \textit{C} .\textit{techniqueCount} );}}\\
+\parbox{14cm}{\textsf{\textit{shrinkby}$\uparrow$\textit{}$\leftarrow$ 1}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{netoutput}$\uparrow$.\textit{cols}} \textbf{ do } }}\\
+\+\<\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{netoutput}$\uparrow$\textit{}[i] $<$ 0)} \textbf{ then } \textsf{\textit{begin}} \textbf{ begin } }}\\
+\parbox{14cm}{\textsf{\textit{amountused}$\leftarrow$ \textit{grossAvail}$\uparrow$\textit{}[i] - \textit{netoutput}$\uparrow$\textit{}[i]}; }\\
+\parbox{14cm}{\textsf{\textit{shortfallratio}$\leftarrow$ $\frac{\textit{capacitytarget} \times (\textit{grossAvail}\uparrow\textit{}[\textit{i}])}{\textit{amountused}}$}; }\\
+\parbox{14cm}{\textsf{\textit{users}$\leftarrow$ \textit{ui}$\uparrow$\textit{}[i]}; }\\
+\end{tabbing}
+Users is now a vector of all techqniques that use product i
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \+ \+ \+ \+ \\
+\parbox{14cm}{\textsf{\textit{weight}$\leftarrow$ 0}; }\\
+\parbox{14cm}{\textsf{\textit{pt}$\leftarrow$ \textit{techniques} (\textit{C})}; }\\
+\\
+\end{tabbing}
+go through all techniques which use product i
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \+ \+ \+ \+ \\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{j}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{users}$\uparrow$.\textit{maxt}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{t}$\leftarrow$ \textit{users}$\uparrow$\textit{}[j]}; }\\
+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{verbose}} \textbf{ then } \textsf{\textbf{writeln}(\textit{\textrm{\textup { ` for product ' } }}, \textit{i}, \textit{\textrm{\textup { `user ' } }}, \textit{j}, \textit{\textrm{\textup { `is technique number ' } }}, \textit{t}$\uparrow$.\textit{techniqueno})}; }}\\
+\end{tabbing}
+check that they do not actually make product i as output
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \+ \+ \+ \+ \+ \\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textbf{not} \textit{produces} (\textit{C}, \textit{t}$\uparrow$\textit{}, \textit{i}) } \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\end{tabbing}
+reduce its intensity by the shortfall ratio
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \+ \+ \+ \+ \+ \+ \\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{shortfallratio} $<$ \textit{shrinkby}$\uparrow$\textit{}[T$\uparrow$.Techniqueno])} \textbf{ then } }}\\
+\-\parbox{14cm}{\textsf{\textit{shrinkby}$\uparrow$\textit{}[T$\uparrow$.Techniqueno]$\leftarrow$ \textit{shortfallratio}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{intense}$\leftarrow$ \textit{intense} $\times$ \textit{shrinkby}$\uparrow$\textit{}}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{verbose})} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `postphase2' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `netoutput' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{netoutput}$\uparrow$\textit{})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `shrinkby' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{shrinkby}$\uparrow$\textit{})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `intensity' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{intense})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textbf{dispose} \textit{(} \textit{grossavail} );}}\\
+\parbox{14cm}{\textsf{\textbf{dispose} \textit{(} \textit{shrinkby} );}}\\
+\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\\
+\parbox{14cm}{\textsf{\textbf{dispose} \textit{(} \textit{netoutput} );}}\\
+\\
+\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{fdH}\label{sec:harmonyfdH}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{fdH} \textit{(} \textit{target} ,  \textit{netoutput} :\textit{real} ) :\textit{real} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{$\epsilon$}, \textit{base}, \textit{baseplusEpsilon} $\in$ real;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\\
+\parbox{14cm}{\textsf{\textit{$\epsilon$}$\leftarrow$ 0.0004}; }\\
+\parbox{14cm}{\textsf{\textit{base}$\leftarrow$ \textit{H} (\textit{target}, \textit{netoutput})}; }\\
+\parbox{14cm}{\textsf{\textit{basePlusEpsilon}$\leftarrow$ \textit{H} (\textit{target}, \textit{$\epsilon$} + \textit{netoutput})}; }\\
+\parbox{14cm}{\textsf{\textit{fdh}$\leftarrow$ $\frac{\textit{basePlusEpsilon} - \textit{base}}{\textit{$\epsilon$}}$}; }\\
+\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{H}\label{sec:harmonyH}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{H} \textit{(}  \textit{target} ,  \textit{netoutput} :\textit{real} ) :\textit{real} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{\textit{scale} :\textit{real} }}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{scale}$\leftarrow$ $\frac{\textit{netoutput} - \textit{target}}{\textit{target}}$}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{scale} $<$ 0)} \textbf{ then } \textsf{\textit{H}$\leftarrow$ \textit{scale} - (\textit{scale} $\times$ \textit{scale}) $\times$ 0.5}}}\\
+\-\<\parbox{14cm}{\textsf {\textbf {else } \textsf{\textit{H}$\leftarrow$ $\ln$(\textit{scale} + 1)}; }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{computeGrossAvail}\label{sec:harmonycomputeGrossAvail}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{computeGrossAvail} \textit{(} \textbf{var}  \textit{C} :\textit{TechnologyComplex}  ;\textbf{var}     \textit{intensity} , \textit{initial} :\textit{vector} ):\textit{pvec} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{outputv} $\in$ pvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{j}, \textit{i}, \textit{p} $\in$ integer;}}\\
+\parbox{14cm}{\textsf{Let \textit{ltrav} $\in$ ptvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{t} $\in$ ptechnique;}}\\
+\parbox{14cm}{\textsf{Let \textit{f} $\in$ real;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(}  \textit{outputv}  ,\textit{C} .\textit{productCount} );}}\\
+\parbox{14cm}{\textsf{\textit{outputv}$\uparrow$\textit{}$\leftarrow$ \textit{initial}}; }\\
+\parbox{14cm}{\textsf{\textit{ltrav}$\leftarrow$ \textit{techniques} (\textit{C})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{j}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{C.techniqueCount}} \textbf{ do } }}\\
+\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{t}$\leftarrow$ \textit{ltrav}$\uparrow$\textit{}[j]}; }\\
+\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{t}$\uparrow$.\textit{produces}$\uparrow$.\textit{max}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{p}$\leftarrow$ \textit{t}$\uparrow$.\textit{produces}$\uparrow$\textit{}[i].\textit{product}$\uparrow$.\textit{productNumber}}; }\\
+\parbox{14cm}{\textsf{\textit{f}$\leftarrow$ \textit{t}$\uparrow$.\textit{produces}$\uparrow$\textit{}[i].\textit{quantity}}; }\\
+\parbox{14cm}{\textsf{\textit{outputv}$\uparrow$\textit{}[p]$\leftarrow$ \textit{outputv}$\uparrow$\textit{}[p] + \textit{f} $\times$ \textit{intensity}$_{\textit{t}\uparrow.\textit{techniqueno}}$}; }\\
+\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{verbose}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\texttt{\small{\{writeln(t\^.techniqueno,p,f,intensity[t\^.techniqueno]);\}}}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{computeGrossAvail}$\leftarrow$ \textit{outputv}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{balancePlan}\label{sec:harmonybalancePlan}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{balancePlan} \textit{(}   \textbf{var}   \textit{planTargets} , \textit{initialresource} :\textit{vector}  ;\textbf{var}  \textit{C} :\textit{technologycomplex} ):\textit{pvec} ;}}\\
+\parbox{14cm}{\textsf{\textbf{label}  99;}}\\
+\\
+\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{producerindex} $\in$ pdvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{intensity}, \textit{netoutput}, \textit{productHarmonyDerivatives} $\in$ pvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{t}, \textit{meanh} $\in$ real;}}\\
+\parbox{14cm}{\textsf{Let \textit{i} $\in$ integer;}}\\
+\<\textsf{\textbf{function}   \textit{computeHarmony}  \textit{(} \textbf{var}  \textit{netOutput} ,  \textit{planTargets} :\textit{vector} ;\textit{C} :\textit{TechnologyComplex}  ;\textbf{var}   \textit{intentsity} :\textit{vector}  ):\textit{pvec} ;} (see Section \ref{sec:harmony/balancePlancomputeHarmony} )\\
+\<\textsf{\textbf{procedure}  \textit{printstate} \textit{(} \textbf{var}  \textit{intensity} :\textit{vector} ;\textit{C} :\textit{TechnologyComplex} ;\textbf{var}   \textit{initial} ,  \textit{targets} :\textit{vector} ) ;} (see Section \ref{sec:harmony/balancePlanprintstate} )\\
+\<\textsf{\textbf{procedure}  \textit{adjustIntensities} \textit{(} \textbf{var}  \textit{intensity} :\textit{vector} ;} (see Section \ref{sec:harmony/balancePlanadjustIntensities} )\\
+\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\<\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{verbose}} \textbf{ then } \textsf{\textit{begin}} \textbf{ begin } }}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `balancePlan' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{planTargets}, \textit{initialresource})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{planTargets.cols} $\neq$ \textit{C.productCount})} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{writeln} \textit{(} \textrm{\textup { `plan target has length ' } },\textit{planTargets} .\textit{cols} ,}}\\
+\parbox{14cm}{\textsf{\textrm{\textup { ` but the number of products in TechnologyComplex is ' } }, \textit{C} .\textit{productCount}      );}}\\
+\parbox{14cm}{\textsf{\textit{balancePlan}$\leftarrow$ \textit{nil}}; }\\
+\parbox{14cm}{\textsf {\textbf {goto } \textsf{99}; }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{producerIndex}$\leftarrow$ \textit{buildProducerIndex} (\textit{C})}; }\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{intensity} , \textit{C} .\textit{techniqueCount} );}}\\
+\parbox{14cm}{\textsf{\textit{initialiseIntensities} (\textit{intensity}$\uparrow$\textit{}, \textit{C}, \textit{initialresource})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{verbose})} \textbf{ then } \textsf{ \textbf{begin}  \textbf{write} \textit{(} \textrm{\textup { `initialised intensity' } });}}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{intensity}$\uparrow$\textit{})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{t}$\leftarrow$ \textit{startingtemp}}; }\\
+\parbox{14cm}{\textsf{\textbf{new}  \textit{(}  \textit{productHarmony} , \textit{C} .\textit{productCount} );}}\\
+\+\<\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 0} \textbf{ to } \textsf{\textit{iters} - 1} \textbf{ do } \textsf{\textit{begin}} \textbf{ begin } }}\\
+\parbox{14cm}{\textsf{\textit{netOutput}$\leftarrow$ \textit{computeNetOutput} (\textit{C}, \textit{intensity}$\uparrow$\textit{}, \textit{initialresource})}; }\\
+\parbox{14cm}{\textsf{\textit{productHarmony}$\uparrow$\textit{}$\leftarrow$ \textit{H} (\textit{planTargets}, \textit{netOutput}$\uparrow$\textit{})}; }\\
+\parbox{14cm}{\textsf{\textit{meanh}$\leftarrow$ \textit{mean} (\textit{productHarmony}$\uparrow$\textit{}, \textit{C})}; }\\
+\parbox{14cm}{\textsf{\textit{productHarmonyDerivatives}$\leftarrow$ \textit{computeHarmonyDerivatives} (\textit{netOutput}$\uparrow$\textit{}, \textit{planTargets}, \textit{C}, \textit{intensity}$\uparrow$\textit{})}; }\\
+\parbox{14cm}{\textsf{\textit{adjustIntensities} \textit{(} \textit{intensity} \textit{\^{}} ,}}\\
+\parbox{14cm}{\textsf{\textit{productHarmonyDerivatives}}}\\
+\parbox{14cm}{\textsf{\textit{t}}}\\
+\parbox{14cm}{\textsf{\textit{C}}}\\
+\parbox{14cm}{\textsf{\textit{productHarmony} \textit{\^{}} ,}}\\
+\parbox{14cm}{\textsf{\textit{producerIndex}}}\\
+\parbox{14cm}{\textsf{\textit{initialresource} ,\textit{planTargets} );}}\\
+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{verbose})} \textbf{ then } \textsf{\textit{printstate} (\textit{intensity}$\uparrow$\textit{}, \textit{C}, \textit{initialresource}, \textit{planTargets})}; }}\\
+\parbox{14cm}{\textsf{\textbf{dispose} \textit{(} \textit{netOutput} );}}\\
+\parbox{14cm}{\textsf{\textbf{dispose} \textit{(} \textit{productHarmonyDerivatives} );}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{balancePlan}$\leftarrow$ \textit{intensity}}; }\\
+\parbox{14cm}{\textsf{99:}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{computeHarmonyDerivatives}\label{sec:harmonycomputeHarmonyDerivatives}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{computeHarmonyDerivatives} \textit{(} \textbf{var}  \textit{netOutput} , \textit{planTargets} :\textit{vector} ;\textit{C} :\textit{TechnologyComplex} ;\textbf{var}  \textit{intentsity} :\textit{vector} ):\textit{pvec}  ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{dh} $\in$ pvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{i}, \textit{solve} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{dh} ,  \textit{netOutput} .\textit{cols} );}}\\
+\parbox{14cm}{\textsf{\textit{dh}$\uparrow$\textit{}$\leftarrow$ \textit{fdH} (\textit{planTargets}, \textit{netOutput})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{solve}$\leftarrow$ 1} \textbf{ to } \textsf{2} \textbf{ do } }}\\
+\parbox{14cm}{\texttt{\small{\{\$par\}}}}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{C.nonfinal}$\uparrow$.\textit{max}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{C.nonfinal}$\uparrow$\textit{}[i])} \textbf{ then } }}\\
+\<\<\<\<\parbox{3.5cm}{\scriptsize{weighted average of derivative due to shortage and due to potential other use}}\'\>\>\>\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{dh}$\uparrow$\textit{}[i]$\leftarrow$ $\frac{\textit{dh}\uparrow\textit{}[\textit{i}] + \textit{useweight} \times \textit{nonfinalHarmonyDerivativeMax} (\textit{netOutput}, \textit{i}, \textit{dh}\uparrow\textit{}, \textit{C})}{\textit{useweight} + 1}$}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{computeHarmonyDerivatives}$\leftarrow$ \textit{dh}}; }\\
+\<\-\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{printstateS}\label{sec:harmonyprintstateS}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{printstateS} \textit{(} \textbf{var}  \textit{netOutput} ,\textit{productHarmonyDerivatives} ,\textit{productHarmony} :\textit{vector} ;\textbf{var}  \textit{C} :\textit{TechnologyComplex}  ;\textbf{var}  \textit{intensity} :\textit{vector} );}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{expansionrate}, \textit{gainrate} $\in$ pvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{i}, \textit{pn} $\in$ integer;}}\\
+\parbox{14cm}{\textsf{Let \textit{t} $\in$ ptvec;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `netoutput  ' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{write}(\textit{netOutput})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `intensity' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{intensity})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln} \textit{(} \textrm{\textup { `h ,' } });}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{productHarmony})}; }\\
+\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `productHarmonyDerivatives' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{productHarmonyDerivatives})}; }\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(}  \textit{expansionrate} ,\textit{C} .\textit{techniquecount} );}}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{gainrate} ,\textit{C} .\textit{techniquecount} );}}\\
+\parbox{14cm}{\textsf{\textit{t}$\leftarrow$ \textit{techniques} (\textit{C})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{C.techniquecount}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{pn}$\leftarrow$ \textit{t}$\uparrow$\textit{}[i]$\uparrow$.\textit{techniqueno}}; }\\
+\parbox{14cm}{\textsf{\textit{gainrate}$\uparrow$\textit{}[pn]$\leftarrow$ \textit{rateOfHarmonyGain} (\textit{t}$\uparrow$\textit{}[i]$\uparrow$\textit{}, \textit{productHarmonyDerivatives})}; }\\
+\parbox{14cm}{\textsf{\textit{expansionrate}$\uparrow$\textit{}[pn]$\leftarrow$ 1 + \textit{sigmoid} (\textit{gainrate}$\uparrow$\textit{}[pn]) $\times$ \textit{startingtemp} $\times$ \textit{phase2adjust}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textbf{write}  \textit{(} \textrm{\textup { `gainrates, ' } });}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{gainrate}$\uparrow$\textit{})}; }\\
+\parbox{14cm}{\textsf{\textbf{write}  \textit{(} \textrm{\textup { `expansionrates,' } });}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{expansionrate}$\uparrow$\textit{})}; }\\
+\parbox{14cm}{\textsf{\textbf{dispose} \textit{(} \textit{expansionrate} );}}\\
+\parbox{14cm}{\textsf{\textbf{dispose} \textit{(} \textit{gainrate} );}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{nonfinalHarmonyDerivativeMax}\label{sec:harmonynonfinalHarmonyDerivativeMax}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{nonfinalHarmonyDerivativeMax} \textit{(} \textbf{var}  \textit{netOutput} :\textit{vector} ;  \textit{nonfinal} :\textit{integer} ;\textbf{var}  \textit{dharmonies} :\textit{vector} ;\textbf{var}  \textit{C} :\textit{TechnologyComplex}   ):\textit{real} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{\textbf{max} ,\textit{total} ,\textit{d} :\textit{real} ;}}\\
+\parbox{14cm}{\textsf{Let \textit{best} $\in$ integer;}}\\
+\parbox{14cm}{\textsf{Let \textit{userIndex} $\in$ pdvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{users} $\in$ ptvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{i}, \textit{techno} $\in$ integer;}}\\
+\parbox{14cm}{\textsf{Let \textit{t} $\in$ ptechnique;}}\\
+\parbox{14cm}{\textsf{Let \textit{mpp} $\in$ pvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{codes} $\in$ pintvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{pt} $\in$ ptvec;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{userIndex}$\leftarrow$ \textit{buildUserIndex} (\textit{C})}; }\\
+\parbox{14cm}{\textsf{\textbf{max} := -1e22;}}\\
+\parbox{14cm}{\textsf{\textit{total}$\leftarrow$ 0}; }\\
+\parbox{14cm}{\textsf{\textit{d}$\leftarrow$ 0}; }\\
+\parbox{14cm}{\textsf{\textit{best}$\leftarrow$ 0}; }\\
+\parbox{14cm}{\textsf{\textit{users}$\leftarrow$ \textit{userIndex}$\uparrow$\textit{}[nonfinal]}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{users} $=$ \textit{nil}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{write}(\textit{\textrm{\textup { `userIndex\^[' } }})}; }\\
+\parbox{14cm}{\textsf{\textit{halt} (405)}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{pt}$\leftarrow$ \textit{techniques} (\textit{C})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{users}$\uparrow$.\textit{maxt}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{t}$\leftarrow$ \textit{users}$\uparrow$\textit{}[i]}; }\\
+\parbox{14cm}{\textsf{\textit{mpp}$\leftarrow$ \textit{marginalphysicalcoproducts} (\textit{t}$\uparrow$\textit{}, \textit{C.allresourceindex}$\uparrow$\textit{}[nonfinal])}; }\\
+\parbox{14cm}{\textsf{\textit{codes}$\leftarrow$ \textit{getCoproductionCodes} (\textit{t}$\uparrow$\textit{})}; }\\
+\parbox{14cm}{\textsf{\textit{d}$\leftarrow$  $\sum$  \textit{dharmonies}$_{\textit{codes}\uparrow\textit{}}$ $\times$ \textit{mpp}$\uparrow$\textit{} }; }\\
+\parbox{14cm}{\textsf{\textbf{dispose} \textit{(} \textit{mpp} );}}\\
+\parbox{14cm}{\textsf{\textbf{dispose} \textit{(} \textit{codes} );}}\\
+\parbox{14cm}{\textsf{\textit{total}$\leftarrow$ \textit{total} + \textit{d}}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{((\textit{d}) $>$ \textit{max})} \textbf{ then } }}\\
+\-\parbox{14cm}{\textsf{\textbf{max} :=\textit{d} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{nonfinalHarmonyDerivativeMax}$\leftarrow$ $\frac{\textit{total}}{\textit{users}}$$\uparrow$.\textit{maxt}}; }\\
+\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{mean}\label{sec:harmonymean}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{mean} \textit{(} \textbf{var}   \textit{m} :\textit{vector} ;\textbf{var}  \textit{C} :\textit{TechnologyComplex}   ):\textit{real} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{sum} $\in$ real;}}\\
+\parbox{14cm}{\textsf{Let \textit{num}, \textit{i} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{sum}$\leftarrow$ 0}; }\\
+\parbox{14cm}{\textsf{\textit{num}$\leftarrow$ 0}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{C.nonproduced}$\uparrow$.\textit{max}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textbf{not} \textit{C.nonproduced} $\uparrow$\textit{}[i])} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{sum}$\leftarrow$ \textit{sum} + \textit{m}$_{\textit{i}}$}; }\\
+\parbox{14cm}{\textsf{\textit{num}$\leftarrow$ \textit{num} + 1}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{mean}$\leftarrow$ $\frac{\textit{sum}}{\textit{num}}$}; }\\
+\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{sdev}\label{sec:harmonysdev}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{sdev} \textit{(} \textbf{var}   \textit{m} :\textit{vector} ;\textbf{var}  \textit{C} :\textit{TechnologyComplex}   ):\textit{real} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{sum}, \textit{av} $\in$ real;}}\\
+\parbox{14cm}{\textsf{Let \textit{num}, \textit{i} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{sum}$\leftarrow$ 0}; }\\
+\parbox{14cm}{\textsf{\textit{av}$\leftarrow$ \textit{mean} (\textit{m}, \textit{C})}; }\\
+\parbox{14cm}{\textsf{\textit{num}$\leftarrow$ 0}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{C.nonproduced}$\uparrow$.\textit{max}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textbf{not} \textit{C.nonproduced} $\uparrow$\textit{}[i])} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{sum}$\leftarrow$ \textit{sum} + (\textit{m}$_{\textit{i}}$ - \textit{av}) $\times$ (\textit{m}$_{\textit{i}}$ - \textit{av})}; }\\
+\parbox{14cm}{\textsf{\textit{num}$\leftarrow$ \textit{num} + 1}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{sdev}$\leftarrow$ $\sqrt{ \textit{sum} / \textit{num} }$}; }\\
+\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{meanv}\label{sec:harmonymeanv}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{meanv} \textit{(} \textbf{var}  \textit{m} :\textit{vector}   ):\textit{real} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{sum} $\in$ real;}}\\
+\parbox{14cm}{\textsf{Let \textit{num}, \textit{i} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{sum}$\leftarrow$ 0}; }\\
+\parbox{14cm}{\textsf{\textit{num}$\leftarrow$ 0}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{m.cols}} \textbf{ do } }}\\
+\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{sum}$\leftarrow$ \textit{sum} + \textit{m}$_{\textit{i}}$}; }\\
+\parbox{14cm}{\textsf{\textit{num}$\leftarrow$ \textit{num} + 1}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{meanv}$\leftarrow$ $\frac{\textit{sum}}{\textit{num}}$}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{stdev}\label{sec:harmonystdev}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}   \textit{stdev} \textit{(} \textbf{var}  \textit{m} :\textit{vector} ;  \textit{av} :\textit{real} ) :\textit{real} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{sum}, \textit{av} $\in$ real;}}\\
+\parbox{14cm}{\textsf{Let \textit{num}, \textit{i} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{sum}$\leftarrow$ 0}; }\\
+\parbox{14cm}{\textsf{\textit{av}$\leftarrow$ \textit{meanv} (\textit{m})}; }\\
+\parbox{14cm}{\textsf{\textit{num}$\leftarrow$ 0}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{m.cols}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{sum}$\leftarrow$ \textit{sum} + (\textit{m}$_{\textit{i}}$ - \textit{av}) $\times$ (\textit{m}$_{\textit{i}}$ - \textit{av})}; }\\
+\parbox{14cm}{\textsf{\textit{num}$\leftarrow$ \textit{num} + 1}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{stdev}$\leftarrow$ $\sqrt{ \textit{sum} / \textit{num} }$}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{initialiseIntensities}\label{sec:harmonyinitialiseIntensities}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{initialiseIntensities} \textit{(} \textbf{var}  \textit{intensity} :\textit{vector} ;\textit{C} :\textit{TechnologyComplex}  ;\textbf{var}  \textit{initialresource}  :\textit{vector} );}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{i} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{intensity}$\leftarrow$ 0.1}; }\\
+\parbox{14cm}{\textsf{\textit{rescaleIntensity} (\textit{intensity}, \textit{C}, \textit{initialresource})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{equaliseHarmony}\label{sec:harmonyequaliseHarmony}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}   \textit{equaliseHarmony} \textit{(}  \textbf{var}  \textit{intensity} ,}}\\
+\parbox{14cm}{\textsf{\textit{derivativeOfProductHarmony}}}\\
+\parbox{14cm}{\textsf{\textit{netproduct} : \textit{vector}}; }\\
+\parbox{14cm}{\textsf{\textit{temperature} : \textit{real}}; }\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{C} $\in$ TechnologyComplex ;}}\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{h} $\in$ vector;}}\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{index} $\in$ pdvec;}}\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{initialresource} $\in$ vector );}}\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{mh}, \textit{divisor} $\in$ real;}}\\
+\parbox{14cm}{\textsf{Let \textit{excessh}, \textit{changeoutput}, \textit{fractionalchange} $\in$ real;}}\\
+\parbox{14cm}{\textsf{Let \textit{k}, \textit{j}, \textit{i} $\in$ integer;}}\\
+\parbox{14cm}{\textsf{Let \textit{productionset} $\in$ ptvec;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\\
+\parbox{14cm}{\textsf{\textit{mh}$\leftarrow$ \textit{mean} (\textit{h}, \textit{C})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{k}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{h.cols}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textbf{not} \textit{C.nonproduced} $\uparrow$\textit{}[k])} \textbf{ then } }}\\
+\+\<\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textbf{not} \textit{C.nonfinal} $\uparrow$\textit{}[k])} \textbf{ then } \textsf{\textit{begin}} \textbf{ begin } }}\\
+\end{tabbing}
+work out how much to change its output to get it on the mean
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \+ \+ \+ \\
+\parbox{14cm}{\textsf{\textit{excessH}$\leftarrow$ (\textit{h}$_{\textit{k}}$ - \textit{mh})}; }\\
+\end{tabbing}
+divide this by the derivative to get change in output
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \+ \+ \+ \\
+\parbox{14cm}{\textsf{\textit{changeOutput}$\leftarrow$ \textit{temperature} $\times$ \textit{excessH}}; }\\
+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{netproduct}$_{\textit{k}}$ $=$ 0.0} \textbf{ then } \textsf{\textit{divisor}$\leftarrow$ 1.0} \textbf{ else } \textsf{\textit{divisor}$\leftarrow$ \textit{netproduct}$_{\textit{k}}$}; }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{derivativeofproductharmony}$_{\textit{k}}$ $\neq$ 0} \textbf{ then } }}\\
+\<\<\parbox{14cm}{\textsf {\textbf {else } \textsf{\textit{begin}} \textbf{ begin } }}\\
+\parbox{14cm}{\textsf{\textbf{writeln} \textit{(} \textrm{\textup { `error, zero harmony derivative for product ' } },\textit{k} );}}\\
+\parbox{14cm}{\textsf{\textit{halt} (406)}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{productionSet}$\leftarrow$ \textit{index}$\uparrow$\textit{}[k]}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{productionset} $=$ \textit{nil}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `corrupt index in equalise harmony' } }})}; }\\
+\parbox{14cm}{\textsf{\textit{halt} (402)}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\+\parbox{14cm}{\textsf{\textbf{else} }}\\
+\+\<\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{productionset}$\uparrow$.\textit{maxt}} \textbf{ do } \textsf{\textit{begin}} \textbf{ begin } }}\\
+\+\<\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{productionset}$\uparrow$\textit{}[i] $=$ \textit{nil})} \textbf{ then } \textsf{\textit{begin}} \textbf{ begin } }}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `productionset[' } }})}; }\\
+\parbox{14cm}{\textsf{\textit{halt} (404)}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{j}$\leftarrow$ \textit{productionset}$\uparrow$\textit{}[i]$\uparrow$.\textit{techniqueno}}; }\\
+\parbox{14cm}{\texttt{\small{(* sign is negative since we reduce the high harmonies*)}}}\\
+\parbox{14cm}{\textsf{\textit{intensity}$_{\textit{j}}$$\leftarrow$ \textit{intensity}$_{\textit{j}}$ $\times$ (1 - \textit{fractionalchange})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{intensity}$_{\textit{j}}$ $<$ 0)} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{writeln} \textit{(} \textrm{\textup { `IllegalIntensity  ' } },\textit{j} ,\textrm{\textup { ` went negative, fractional change = ' } },\textit{fractionalchange} );}}\\
+\<\<\<\<\<\<\<\parbox{3.5cm}{\scriptsize{signal the pascal arithmetic overflow error}}\'\>\>\>\>\>\>\>\parbox{14cm}{\textsf{\textit{halt} (215)}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{computeNetOutput}\label{sec:harmonycomputeNetOutput}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{computeNetOutput} \textit{(} \textbf{var}  \textit{C} :\textit{TechnologyComplex}  ;\textbf{var}  \textit{intensity} ,\textit{initial} :\textit{vector} ):\textit{pvec} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{outputv} $\in$ pvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{k}, \textit{k2}, \textit{i}, \textit{j} $\in$ integer;}}\\
+\parbox{14cm}{\textsf{Let \textit{t} $\in$ ptechnique;}}\\
+\parbox{14cm}{\textsf{Let \textit{pt} $\in$ ptvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{it} $\in$ real;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `in compute net output' } }})}; }\\
+\parbox{14cm}{\textsf{\textit{outputv}$\leftarrow$ \textit{computeGrossAvail} (\textit{C}, \textit{intensity}, \textit{initial})}; }\\
+\parbox{14cm}{\textsf{\textit{pt}$\leftarrow$ \textit{techniques} (\textit{C})}; }\\
+\+\<\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{verbose})} \textbf{ then } \textsf{\textit{begin}} \textbf{ begin } }}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `output' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{outputv}$\uparrow$\textit{})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{j}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{C.techniqueCount}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{t}$\leftarrow$ \textit{pt}$\uparrow$\textit{}[j]}; }\\
+\parbox{14cm}{\textsf{\textit{it}$\leftarrow$ \textit{intensity}$_{\textit{t}\uparrow.\textit{techniqueno}}$}; }\\
+\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{k}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{t}$\uparrow$.\textit{consumes}$\uparrow$.\textit{max}} \textbf{ do } }}\\
+\parbox{14cm}{\textsf{\textit{outputv}$\uparrow$\textit{}[t$\uparrow$.consumes$\uparrow$[k].product$\uparrow$.productnumber]$\leftarrow$ \textit{outputv}$\uparrow$\textit{}[t$\uparrow$.consumes$\uparrow$[k].product$\uparrow$.productnumber]}}\\
+\-\parbox{14cm}{\textsf{-\textit{it} *\textit{t} \textit{\^{}} .\textit{consumes} \textit{\^{}} [\textit{k} ].\textit{quantity} ;}}\\
+\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `leavecomputenetoutput' } }})}; }\\
+\parbox{14cm}{\textsf{\textit{computeNetOutput}$\leftarrow$ \textit{outputv}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{sigmoid}\label{sec:harmonysigmoid}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{sigmoid} \textit{(}   \textit{d} :\textit{real} ):\textit{real} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{d} $>$ 0)} \textbf{ then } \textsf{\textit{sigmoid}$\leftarrow$ $\frac{\textit{d}}{1 + \textit{d}}$} \textbf{ else } }}\\
+\+\<\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{d} $=$ 0)} \textbf{ then } \textsf{\textit{sigmoid}$\leftarrow$ 0} \textbf{ else } \textsf{\textit{begin}} \textbf{ begin } }}\\
+\parbox{14cm}{\textsf{\textit{d}$\leftarrow$  -  \textit{d} }; }\\
+\parbox{14cm}{\textsf{\textit{sigmoid}$\leftarrow$  -  ($\frac{\textit{d}}{1 + \textit{d}}$) }; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\<\-\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{computeHarmony}\label{sec:harmony/balancePlancomputeHarmony}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}   \textit{computeHarmony}  \textit{(} \textbf{var}  \textit{netOutput} ,  \textit{planTargets} :\textit{vector} ;\textit{C} :\textit{TechnologyComplex}  ;\textbf{var}   \textit{intentsity} :\textit{vector}  ):\textit{pvec} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{lh} $\in$ pvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{i} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{lh} ,\textit{netOutput} .\textit{cols} );}}\\
+\\
+\parbox{14cm}{\textsf{\textit{lh}$\uparrow$\textit{}$\leftarrow$ \textit{H} (\textit{planTargets}, \textit{netOutput})}; }\\
+\parbox{14cm}{\textsf{\textit{computeHarmony}$\leftarrow$ \textit{lh}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{printstate}\label{sec:harmony/balancePlanprintstate}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{printstate} \textit{(} \textbf{var}  \textit{intensity} :\textit{vector} ;\textit{C} :\textit{TechnologyComplex} ;\textbf{var}   \textit{initial} ,  \textit{targets} :\textit{vector} ) ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{netoutput}, \textit{h}, \textit{hd} $\in$ pvec;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{netOutput}$\leftarrow$ \textit{computeNetOutput} (\textit{C}, \textit{intensity}, \textit{initial})}; }\\
+\parbox{14cm}{\textsf{\textit{h}$\leftarrow$ \textit{computeHarmony} (\textit{netOutput}$\uparrow$\textit{}, \textit{targets}, \textit{C}, \textit{intensity})}; }\\
+\parbox{14cm}{\textsf{\textit{hd}$\leftarrow$ \textit{computeHarmonyDerivatives} (\textit{netOutput}$\uparrow$\textit{}, \textit{targets}, \textit{C}, \textit{intensity})}; }\\
+\parbox{14cm}{\textsf{\textit{printstateS} (\textit{netOutput}$\uparrow$\textit{}, \textit{hd}$\uparrow$\textit{}, \textit{h}$\uparrow$\textit{}, \textit{C}, \textit{intensity})}; }\\
+\parbox{14cm}{\textsf{//  \textbf{writeln} \textit{(} \textrm{\textup { `dispose in printstate' } });}}\\
+\parbox{14cm}{\textsf{\textbf{dispose} \textit{(} \textit{h} );}}\\
+\parbox{14cm}{\textsf{\textbf{dispose} \textit{(} \textit{hd} );}}\\
+\parbox{14cm}{\textsf{\textbf{dispose} \textit{(} \textit{netOutput} );}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{adjustIntensities}\label{sec:harmony/balancePlanadjustIntensities}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{adjustIntensities} \textit{(} \textbf{var}  \textit{intensity} :\textit{vector} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{derivativeOfProductHarmony} $\in$ pvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{temperature} $\in$ real;}}\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{C} $\in$ technologycomplex;}}\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{h} $\in$ vector;}}\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{index} $\in$ pdvec;}}\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{\textit{initialresource} ,}}\\
+\parbox{14cm}{\textsf{Let \textit{planTargets} $\in$ vector);}}\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{netOutput} $\in$ pvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{expansionrate} $\in$ pvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{ltechniques} $\in$ ptvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{t} $\in$ ptechnique;}}\\
+\parbox{14cm}{\textsf{Let \textit{meane}, \textit{adjustedexp} $\in$ real;}}\\
+\parbox{14cm}{\textsf{Let \textit{i}, \textit{j} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{netOutput}$\leftarrow$ \textit{computeNetOutput} (\textit{C}, \textit{intensity}, \textit{initialresource})}; }\\
+\+\<\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{verbose})} \textbf{ then } \textsf{\textit{begin}} \textbf{ begin } }}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `preequalisation' } }})}; }\\
+\parbox{14cm}{\textsf{\textit{printstate} (\textit{intensity}, \textit{C}, \textit{initialresource}, \textit{planTargets})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{equaliseHarmony} \textit{(}   \textit{intensity} ,}}\\
+\parbox{14cm}{\textsf{\textit{derivativeOfProductHarmony} \textit{\^{}} ,}}\\
+\parbox{14cm}{\textsf{\textit{netOutput} \textit{\^{}} ,}}\\
+\parbox{14cm}{\textsf{\textit{temperature}}}\\
+\parbox{14cm}{\textsf{\textit{C}}}\\
+\parbox{14cm}{\textsf{\textit{h}}}\\
+\parbox{14cm}{\textsf{\textit{index}}}\\
+\parbox{14cm}{\textsf{\textit{initialresource}  );}}\\
+\\
+\parbox{14cm}{\textsf{//    \textbf{dispose} \textit{(} \textit{netOutput} );}}\\
+\parbox{14cm}{\textsf{\textit{netOutput}$\leftarrow$ \textit{computeNetOutput} (\textit{C}, \textit{intensity}, \textit{initialresource})}; }\\
+\parbox{14cm}{\textsf{\textit{derivativeOfProductHarmony}$\leftarrow$ \textit{computeHarmonyDerivatives} (\textit{netOutput}$\uparrow$\textit{}, \textit{planTargets}, \textit{C}, \textit{intensity})}; }\\
+\+\<\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{verbose})} \textbf{ then } \textsf{\textit{begin}} \textbf{ begin } }}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `prereallocation' } }})}; }\\
+\parbox{14cm}{\textsf{\textit{printstate} (\textit{intensity}, \textit{C}, \textit{initialresource}, \textit{planTargets})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{expansionrate} ,  \textit{C} .\textit{techniquecount} );}}\\
+\parbox{14cm}{\textsf{\textit{ltechniques}$\leftarrow$ \textit{techniques} (\textit{C})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{C.techniquecount}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{t}$\leftarrow$ \textit{ltechniques}$\uparrow$\textit{}[i]}; }\\
+\parbox{14cm}{\textsf{\textit{expansionrate}$\uparrow$\textit{}[i]$\leftarrow$ \textit{rateOfHarmonyGain} (\textit{t}$\uparrow$\textit{}, \textit{derivativeOfProductHarmony}$\uparrow$\textit{})}; }\\
+\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{meane}$\leftarrow$ \textit{meanv} (\textit{expansionrate}$\uparrow$\textit{})}; }\\
+\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{C.techniquecount}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\\
+\parbox{14cm}{\textsf{\textit{adjustedexp}$\leftarrow$ \textit{sigmoid} (\textit{expansionrate}$\uparrow$\textit{}[i]) $\times$ \textit{temperature} $\times$ \textit{phase2adjust}}; }\\
+\end{tabbing}
+absolute limit to shrink rate
+shrink or expand in proportion to gains
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \+ \\
+\parbox{14cm}{\textsf{\textit{intensity}$_{\textit{i}}$$\leftarrow$ \textit{intensity}$_{\textit{i}}$ $\times$ (1 + \textit{adjustedexp})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{intensity}$_{\textit{i}}$ $<$ 0)} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{writeln} \textit{(} \textrm{\textup { ` intensity ' } },\textit{i} ,\textrm{\textup { ` went negative, adjustedexp=' } } ,\textit{adjustedexp} );}}\\
+\parbox{14cm}{\textsf {\textbf {goto } \textsf{99}; }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textbf{dispose} \textit{(} \textit{netOutput} );}}\\
+\parbox{14cm}{\textsf{\textit{netOutput}$\leftarrow$ \textit{computeNetOutput} (\textit{C}, \textit{intensity}, \textit{initialresource})}; }\\
+\parbox{14cm}{\textsf{\textbf{dispose} \textit{(} \textit{derivativeOfProductHarmony} );}}\\
+\parbox{14cm}{\textsf{\textit{derivativeOfProductHarmony}$\leftarrow$ \textit{computeHarmonyDerivatives} (\textit{netOutput}$\uparrow$\textit{}, \textit{planTargets}, \textit{C}, \textit{intensity})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{verbose})} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `postreallocation' } }})}; }\\
+\parbox{14cm}{\textsf{\textit{printstate} (\textit{intensity}, \textit{C}, \textit{initialresource}, \textit{planTargets})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{rescaleIntensity} (\textit{intensity}, \textit{C}, \textit{initialresource})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}

@@ -47,7 +47,7 @@ public class Technique {
         for(int j=0; j< inputCodes.length; j++) {
             cost+=derivativeOfProductHarmony[ inputCodes[j]]* inputUsage[j];
         }
-        //  System.out.println(identifier+","+productCode+","+gain+","+cost);
+    //    System.out.println(identifier+","+productCode+","+gain+","+cost+","+((gain-cost)/cost ));
         return (gain-cost)/cost;
     }
     static int findiIna(int i, int[] a) {

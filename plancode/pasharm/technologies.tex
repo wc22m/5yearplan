@@ -1,0 +1,677 @@
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\end{tabbing}
+A library to represent a set of production technologies in a more compact
+form than as an input output table or matrix. It can take advantage
+of the sparse character of large io tables.
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\end{tabbing}
+Copyright (C) 2018 William Paul Cockshott
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\end{tabbing}
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\end{tabbing}
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\end{tabbing}
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see https://www.gnu.org/licenses/.
+*
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\parbox{14cm}{\textsf{\textbf{unit}  \textit{technologies} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{interface} }}\\
+\\
+\+\parbox{14cm}{\textsf{\textbf{const} }}\\
+\parbox{14cm}{\textsf{\textit{namelen}  = 35;}}\\
+\<\parbox{14cm}{\textsf{\textbf{type} }}\\
+\parbox{14cm}{\textsf{\textit{pvec} =\textit{\^{}} \textit{vector} ;}}\\
+\parbox{14cm}{\textsf{\textit{resourceid} = \textbf{string} [\textit{namelen} ];}}\\
+\parbox{14cm}{\textsf{\textit{ptechniquelist}  = \textit{\^{}}  \textit{techniquelist} ;}}\\
+\+\parbox{14cm}{\textsf{\textit{resourcerec}  = \textbf{record} }}\\
+\parbox{14cm}{\textsf{\textit{id} : \textit{resourceid}}; }\\
+\parbox{14cm}{\textsf{\textit{productNumber} : \textit{integer}}; }\\
+\parbox{14cm}{\textsf{\textit{users}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{presource} $=$ $\uparrow$ \textit{resourcerec} }; }\\
+\parbox{14cm}{\textsf{\textit{resourceindex}  \textit{(} \textbf{max} :\textit{integer} )=\textbf{array} [1..\textbf{max} ] \textbf{of}  \textit{presource} ;}}\\
+\parbox{14cm}{\textsf{\textit{presourceindex} $=$ $\uparrow$ \textit{resourceindex} }; }\\
+\+\parbox{14cm}{\textsf{\textit{iopair} $=$ \textit{record}}}\\
+\parbox{14cm}{\textsf{\textit{product} : \textit{presource}}; }\\
+\parbox{14cm}{\textsf{\textit{quantity} : \textit{real}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{resourcevec} \textit{(} \textbf{max} :\textit{integer} )=\textbf{array} [1..\textbf{max} ] \textbf{of}  \textit{iopair} ;}}\\
+\parbox{14cm}{\textsf{\textit{presourcevec} $=$ $\uparrow$ \textit{resourcevec} }; }\\
+\+\parbox{14cm}{\textsf{\textit{technique} $=$ \textit{record}}}\\
+\parbox{14cm}{\textsf{\textit{produces}}; }\\
+\parbox{14cm}{\textsf{\textit{techniqueno} : \textit{integer}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{ptechnique} $=$ $\uparrow$ \textit{technique} }; }\\
+\+\parbox{14cm}{\textsf{\textit{techniquelist} $=$ \textit{record}}}\\
+\parbox{14cm}{\textsf{\textit{tech} : \textit{ptechnique}}; }\\
+\parbox{14cm}{\textsf{\textit{next} : \textit{ptechniquelist}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{pproductlist} $=$ $\uparrow$ \textit{productlist} }; }\\
+\+\parbox{14cm}{\textsf{\textit{productlist} $=$ \textit{record}}}\\
+\parbox{14cm}{\textsf{\textit{product} : \textit{presource}}; }\\
+\parbox{14cm}{\textsf{\textit{next} : \textit{pproductlist}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\<\parbox{3.5cm}{\scriptsize{Hash table of products}}\'\>\>\parbox{14cm}{\textsf{\textit{productindex} \textit{(} \textbf{max} :\textit{integer} )=\textbf{array} [0..\textbf{max}  ] \textbf{of}  \textit{pproductlist} ;}}\\
+\parbox{14cm}{\textsf{\textit{pproductindex} $=$ $\uparrow$ \textit{productindex} }; }\\
+\parbox{14cm}{intvec(maxi:\textsf{\textit{integer} )=} \textbf{ array } \textsf{\textit{}[1..maxi]} \textbf{ of } \textsf{\textit{integer}}; }\\
+\parbox{14cm}{\textsf{\textit{pintvec} $=$ $\uparrow$ \textit{intvec} }; }\\
+\parbox{14cm}{techvec(maxt:\textsf{\textit{integer} )= } \textbf{ array } \textsf{\textit{}[1..maxt]} \textbf{ of } \textsf{\textit{ptechnique}}; }\\
+\parbox{14cm}{\textsf{\textit{ptvec} $=$ $\uparrow$ \textit{techvec} }; }\\
+\parbox{14cm}{producervec(maxv:\textsf{\textit{integer} )= } \textbf{ array } \textsf{\textit{}[1..maxv]} \textbf{ of } \textsf{\textit{ptvec}}; }\\
+\parbox{14cm}{\textsf{\textit{pdvec} $=$ $\uparrow$ \textit{producervec} }; }\\
+\parbox{14cm}{\textsf{\textit{bvec} \textit{(} \textbf{max} :\textit{integer} )= \textbf{array} [1..\textbf{max} ] \textbf{of}  \textit{boolean} ;}}\\
+\parbox{14cm}{\textsf{\textit{pbvec} $=$ $\uparrow$ \textit{bvec} }; }\\
+\parbox{14cm}{\textsf{\textit{pcomplex} $=$ $\uparrow$ \textit{technologycomplex} }; }\\
+\+\parbox{14cm}{\textsf{\textit{technologycomplex} $=$ \textit{record}}}\\
+\parbox{14cm}{\textsf{\textit{techniqueslist} : \textit{ptechniquelist}}; }\\
+\parbox{14cm}{\textsf{\textit{techniquesvec} : \textit{ptvec}}; }\\
+\parbox{14cm}{\textsf{\textit{index} : \textit{pproductindex}}; }\\
+\parbox{14cm}{\textsf{\textit{producerIndex}}; }\\
+\parbox{14cm}{\textsf{\textit{nonfinal} : \textit{pbvec}}; }\\
+\parbox{14cm}{\textsf{\textit{nonproduced} : \textit{pbvec}}; }\\
+\parbox{14cm}{\textsf{\textit{techniquecount}}; }\\
+\\
+\parbox{14cm}{\textsf{\textit{allresourceindex} : \textit{presourceindex}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{tc} $=$ \textit{technologycomplex}}; }\\
+\\
+\<\textsf{\textbf{procedure}  \textit{logComplex} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} );} (see Section \ref{sec:technologieslogComplex} )\\
+\<\textsf{\textbf{function}  \textit{techniques} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ):\textit{ptvec} ;} (see Section \ref{sec:technologiestechniques} )\\
+\<\textsf{\textbf{function}  \textit{produces} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;\textit{t}  :\textit{technique} ;\textit{productNumber} :\textit{integer} ):\textit{boolean} ;} (see Section \ref{sec:technologiesproduces} )\\
+\<\textsf{\textbf{function}  \textit{buildProducerIndex} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ):\textit{pdvec}  ;} (see Section \ref{sec:technologiesbuildProducerIndex} )\\
+\<\textsf{\textbf{function}  \textit{buildUserIndex} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ):\textit{pdvec}  ;} (see Section \ref{sec:technologiesbuildUserIndex} )\\
+\<\textsf{\textbf{function}  \textit{buildIndex} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;\textit{produces} :\textit{boolean} ):\textit{pdvec}  ;} (see Section \ref{sec:technologiesbuildIndex} )\\
+\<\textsf{\textbf{function}  \textit{defineTechnique} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;\textbf{var}  \textit{inputs} ,\textit{outputs} :\textit{resourcevec}  ):\textit{ptechnique} ;} (see Section \ref{sec:technologiesdefineTechnique} )\\
+\<\textsf{\textbf{procedure}  \textit{addproduct} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;  \textbf{name} :\textbf{string} ;\textit{number} :\textit{integer} );} (see Section \ref{sec:technologiesaddproduct} )\\
+\<\textsf{\textbf{function}  \textit{findproduct} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ; \textbf{name} :\textbf{string} ):\textit{presource} ;} (see Section \ref{sec:technologiesfindproduct} )\\
+\<\textsf{\textbf{function}  \textit{defineResource} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;\textbf{name} :\textit{resourceid} ;\textit{number} :\textit{integer} ):\textit{presource} ;} (see Section \ref{sec:technologiesdefineResource} )\\
+\<\textsf{\textbf{function}  \textit{defineproductlist} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;\textbf{name} :\textbf{string} ; \textit{p} :\textit{pproductlist} ;\textit{number} :\textit{integer} ):\textit{pproductlist} ;} (see Section \ref{sec:technologiesdefineproductlist} )\\
+\\
+\<\textsf{\textbf{procedure}  \textit{defineComplex} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;\textit{numberofproducts} :\textit{integer} );} (see Section \ref{sec:technologiesdefineComplex} )\\
+\<\textsf{\textbf{function}  \textit{rateOfHarmonyGain} \textit{(} \textbf{var}  \textit{t} :\textit{technique} ;\textbf{var}  \textit{derivativeOfProductHarmony} :\textit{vector} ) :\textit{real}  ;} (see Section \ref{sec:technologiesrateOfHarmonyGain} )\\
+\<\textsf{\textbf{function}   \textit{marginalphysicalcoproducts} \textit{(} \textbf{var}  \textit{t} :\textit{technique} ;   \textit{input} :\textit{presource} ) :\textit{pvec} ;} (see Section \ref{sec:technologiesmarginalphysicalcoproducts} )\\
+\<\textsf{\textbf{function}  \textit{getCoproductionCodes} \textit{(} \textbf{var}  \textit{t}  :\textit{technique} ):\textit{pintvec} ;} (see Section \ref{sec:technologiesgetCoproductionCodes} )\\
+\<\parbox{14cm}{\textsf{\textbf{implementation} }}\\
+\<\textsf{\textbf{procedure}  \textit{logComplex} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} );} (see Section \ref{sec:technologieslogComplex} )\\
+\\
+\<\textsf{\textbf{function}   \textit{techniques} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ):\textit{ptvec} ;} (see Section \ref{sec:technologiestechniques} )\\
+\<\textsf{\textbf{function}   \textit{produces} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;\textit{t}  :\textit{technique} ;\textit{productNumber} :\textit{integer} ):\textit{boolean} ;} (see Section \ref{sec:technologiesproduces} )\\
+\<\textsf{\textbf{function}  \textit{getCoproductionCodes} \textit{(} \textbf{var}  \textit{t}  :\textit{technique} ):\textit{pintvec} ;} (see Section \ref{sec:technologiesgetCoproductionCodes} )\\
+\<\textsf{\textbf{function}  \textit{findiIna} \textit{(}   \textit{i} :\textit{presource} ;\textbf{var}  \textit{a} : \textit{resourcevec} ) :\textit{integer} ;} (see Section \ref{sec:technologiesfindiIna} )\\
+\<\textsf{\textbf{function}   \textit{marginalphysicalcoproducts} \textit{(} \textbf{var}  \textit{t} :\textit{technique} ;    \textit{input} :\textit{presource} ) :\textit{pvec} ;} (see Section \ref{sec:technologiesmarginalphysicalcoproducts} )\\
+\<\textsf{\textbf{function}   \textit{rateOfHarmonyGain} \textit{(} \textbf{var}  \textit{t} :\textit{technique} ;\textbf{var}  \textit{derivativeOfProductHarmony} :\textit{vector} ) :\textit{real} ;} (see Section \ref{sec:technologiesrateOfHarmonyGain} )\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\textsf{\textbf{function}  \textit{hash} \textit{(} \textit{s} :\textbf{string} ):\textit{integer} ;} (see Section \ref{sec:technologieshash} )\\
+\end{tabbing}
+\section{logComplex}\label{sec:technologieslogComplex}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{logComplex} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} );}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{f} $\in$ text;}}\\
+\parbox{14cm}{\textsf{Let \textit{i}, \textit{j} $\in$ integer;}}\\
+\parbox{14cm}{\textsf{\textit{ui} :\textit{pdvec} }}\\
+\<\textsf{\textbf{procedure}  \textit{printtechnique} \textit{(} \textbf{var}  \textit{t} :\textit{technique} );} (see Section \ref{sec:technologies/logComplexprinttechnique} )\\
+\<\textsf{\textbf{procedure}  \textit{rect} \textit{(} \textit{te} :\textit{ptechniquelist} );} (see Section \ref{sec:technologies/logComplexrect} )\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\<\parbox{14cm}{\textsf {\textbf {with } \textsf{\textit{ct}} \textbf{ do } \textsf{\textit{begin}} \textbf{ begin } }}\\
+\parbox{14cm}{\textsf{\textit{assign} (\textit{f}, \textit{\textrm{\textup { `complex.csv' } }})}; }\\
+\parbox{14cm}{\textsf{\textit{rewrite} (\textit{f})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{f}, \textit{\textrm{\textup { `Technology Complex' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln} \textit{(} \textit{f} ,\textrm{\textup { `index.max,nonproduced.max,nonfinal.max,allresourceindex.max,techniquecount, productcount' } });}}\\
+\parbox{14cm}{\textsf{\textbf{writeln} \textit{(} \textit{f} ,\textit{index} \textit{\^{}} .\textbf{max} ,\textrm{\textup { `,' } },\textit{nonproduced} \textit{\^{}} .\textbf{max} ,\textrm{\textup { `,' } },\textit{nonfinal} \textit{\^{}} .\textbf{max} ,\textrm{\textup { `,' } },\textit{allresourceindex} \textit{\^{}} .\textbf{max} ,\textrm{\textup { `,' } },\textit{techniquecount} , \textrm{\textup { `,' } },\textit{productcount} );}}\\
+\parbox{14cm}{\textsf{\textbf{write}(\textit{f}, \textit{\textrm{\textup { `Resource number' } }})}; }\\
+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{allresourceindex}$\uparrow$.\textit{max}} \textbf{ do } \textsf{ \textbf{write} \textit{(} \textit{f} ,\textrm{\textup { `,' } },\textit{i} );}}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{f})}; }\\
+\parbox{14cm}{\textsf{\textbf{write}(\textit{f}, \textit{\textrm{\textup { `Resource id' } }})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{allresourceindex}$\uparrow$.\textit{max}} \textbf{ do } }}\\
+\-\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{allresourceindex}$\uparrow$\textit{}[i] $=$ \textit{nil}} \textbf{ then } \textsf{ \textbf{write}  \textit{(} \textit{f} ,\textrm{\textup { `, ' } }) } \textbf{ else } \textsf{ \textbf{write} \textit{(} \textit{f} ,\textrm{\textup { `,' } },\textit{allresourceindex} \textit{\^{}} [\textit{i} ]\textit{\^{}} .\textit{id} );}}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{f})}; }\\
+\parbox{14cm}{\texttt{\small{\{ now list all techniques \}}}}\\
+\parbox{14cm}{\textsf{\textit{rect} (\textit{techniqueslist})}; }\\
+\parbox{14cm}{\texttt{\small{\{ now the user index \}}}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{f}, \textit{\textrm{\textup { `User index' } }})}; }\\
+\parbox{14cm}{\textsf{\textit{ui}$\leftarrow$ \textit{buildUserIndex} (\textit{ct})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{ui}$\uparrow$.\textit{maxv}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textit{f} ,\textrm{\textup { `Product,' } },\textit{i} ,\textrm{\textup { `,is used by technique' } });}}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{j}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{ui}$\uparrow$\textit{}[i]$\uparrow$.\textit{maxt}} \textbf{ do } }}\\
+\-\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textit{f} ,\textrm{\textup { `,' } },\textit{ui} \textit{\^{}} [\textit{i} ]\textit{\^{}} [\textit{j} ]\textit{\^{}} .\textit{techniqueno} );}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{f})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{f}, \textit{\textrm{\textup { `Producer index' } }})}; }\\
+\parbox{14cm}{\textsf{\textit{ui}$\leftarrow$ \textit{buildproducerIndex} (\textit{ct})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{ui}$\uparrow$.\textit{maxv}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textit{f} ,\textrm{\textup { `Product,' } },\textit{i} );}}\\
+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{nonproduced}$\uparrow$\textit{}[i]} \textbf{ then } \textsf{ \textbf{write} \textit{(} \textit{f} ,\textrm{\textup { `, is an initial input and produced by' } }) } \textbf{ else } \textsf{ \textbf{write} \textit{(} \textit{f} ,\textrm{\textup { `,is produced by technique' } });}}}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{j}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{ui}$\uparrow$\textit{}[i]$\uparrow$.\textit{maxt}} \textbf{ do } }}\\
+\-\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textit{f} ,\textrm{\textup { `,' } },\textit{ui} \textit{\^{}} [\textit{i} ]\textit{\^{}} [\textit{j} ]\textit{\^{}} .\textit{techniqueno} );}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{f})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{close} (\textit{f})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{techniques}\label{sec:technologiestechniques}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}   \textit{techniques} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ):\textit{ptvec} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{i} $\in$ integer;}}\\
+\parbox{14cm}{\textsf{Let \textit{list} $\in$ ptechniquelist;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\<\parbox{14cm}{\textsf {\textbf {with } \textsf{\textit{ct}} \textbf{ do } \textsf{\textit{begin}} \textbf{ begin } }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{techniquesvec} $=$ \textit{nil}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{techniquesvec} ,\textit{techniquecount} );}}\\
+\parbox{14cm}{\textsf{\textit{list}$\leftarrow$ \textit{techniqueslist}}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{techniquecount}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{techniquesvec}$\uparrow$\textit{}[i]$\leftarrow$ \textit{list}$\uparrow$.\textit{tech}}; }\\
+\parbox{14cm}{\textsf{\textit{list}$\leftarrow$ \textit{list}$\uparrow$.\textit{next}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{techniques}$\leftarrow$ \textit{techniquesvec}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{produces}\label{sec:technologiesproduces}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}   \textit{produces} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;\textit{t}  :\textit{technique} ;\textit{productNumber} :\textit{integer} ):\textit{boolean} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{i} $\in$ integer;}}\\
+\parbox{14cm}{\textsf{Let \textit{ok} $\in$ boolean;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{\textit{t}} \textbf{ do }  \textbf{ with } \textsf{\textit{ct}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{ok}$\leftarrow$ \textit{false}}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{produces}$\uparrow$.\textit{max}} \textbf{ do } }}\\
+\-\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{produces}$\uparrow$\textit{}[i].\textit{product}$\uparrow$.\textit{productnumber} $=$ \textit{productNumber}} \textbf{ then } \textsf{\textit{ok}$\leftarrow$ \textit{true}}; }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{produces}$\leftarrow$ \textit{ok}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{getCoproductionCodes}\label{sec:technologiesgetCoproductionCodes}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{getCoproductionCodes} \textit{(} \textbf{var}  \textit{t}  :\textit{technique} ):\textit{pintvec} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{p} $\in$ pintvec;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{\textit{t}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{p} ,\textit{produces} \textit{\^{}} .\textbf{max} );}}\\
+\parbox{14cm}{\textsf{\textit{p}$\uparrow$\textit{}$\leftarrow$ \textit{produces}$\uparrow$\textit{}[iota$_{0}$].\textit{product}$\uparrow$.\textit{productNumber}}; }\\
+\parbox{14cm}{\textsf{\textit{getCoproductionCodes}$\leftarrow$ \textit{p}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{findiIna}\label{sec:technologiesfindiIna}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{findiIna} \textit{(}   \textit{i} :\textit{presource} ;\textbf{var}  \textit{a} : \textit{resourcevec} ) :\textit{integer} ;}}\\
+\parbox{14cm}{\textsf{\textbf{label}  99;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{j} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{j}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{a.max}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{a}$_{\textit{j}}$.\textit{product}$\uparrow$.\textit{id} $=$ \textit{i}$\uparrow$.\textit{id})} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{findiIna}$\leftarrow$ \textit{j}}; }\\
+\parbox{14cm}{\textsf {\textbf {goto } \textsf{99}; }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{findiIna}$\leftarrow$  -  1 }; }\\
+\parbox{14cm}{\textsf{99:}}\\
+\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{marginalphysicalcoproducts}\label{sec:technologiesmarginalphysicalcoproducts}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}   \textit{marginalphysicalcoproducts} \textit{(} \textbf{var}  \textit{t} :\textit{technique} ;    \textit{input} :\textit{presource} ) :\textit{pvec} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{mpp} $\in$ pvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{pos}, \textit{i} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{mpp} , \textit{t} .\textit{produces} \textit{\^{}} .\textbf{max} );}}\\
+\\
+\parbox{14cm}{\textsf{\textit{pos}$\leftarrow$ \textit{findiIna} (\textit{input}, \textit{t.consumes}$\uparrow$\textit{})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{pos} $<$ 1} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `findiIna returns ' } }}, \textit{pos})}; }\\
+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{input} $=$ \textit{nil}} \textbf{ then } \textsf{\textbf{write}(\textit{\textrm{\textup { `input was nil' } }})} \textbf{ else } \textsf{\textbf{writeln}(\textit{\textrm{\textup { `input non nil' } }})}; }}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { ` in  technique ' } }}, \textit{t.techniqueno})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `could not find ' } }}, \textit{input}$\uparrow$.\textit{productnumber}, \textit{input}$\uparrow$.\textit{id})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `the technique actually consumes the following' } }})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{t.consumes}$\uparrow$.\textit{max}} \textbf{ do } }}\\
+\-\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textit{t} .\textit{consumes} \textit{\^{}} [\textit{i} ].\textit{product} \textit{\^{}} .\textit{id} ,\textrm{\textup { `, ' } });}}\\
+\parbox{14cm}{\textsf{\textit{halt} (405)}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{\textit{t}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{mpp}$\uparrow$.\textit{cols}} \textbf{ do } }}\\
+\-\-\parbox{14cm}{\textsf{\textit{mpp}$\uparrow$\textit{}[i]$\leftarrow$ \textit{produces}$\uparrow$\textit{}[i].$\frac{\textit{quantity}}{\textit{consumes}}$$\uparrow$\textit{}[pos].\textit{quantity}}; }\\
+\\
+\parbox{14cm}{\textsf{\textit{marginalphysicalcoproducts}$\leftarrow$ \textit{mpp}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{rateOfHarmonyGain}\label{sec:technologiesrateOfHarmonyGain}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}   \textit{rateOfHarmonyGain} \textit{(} \textbf{var}  \textit{t} :\textit{technique} ;\textbf{var}  \textit{derivativeOfProductHarmony} :\textit{vector} ) :\textit{real} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{gain}, \textit{cost} $\in$ real;}}\\
+\parbox{14cm}{\textsf{Let \textit{j} $\in$ integer;}}\\
+\+\<\parbox{14cm}{\textsf{\textbf{begin}     \textbf{with}  \textit{t}  \textbf{do}  \textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{gain}$\leftarrow$ 0}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{j}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{produces}$\uparrow$.\textit{max}} \textbf{ do } }}\\
+\-\parbox{14cm}{\textsf{\textit{gain}$\leftarrow$ \textit{gain} + \textit{derivativeOfProductHarmony}$_{\textit{produces}\uparrow\textit{}[\textit{j}].\textit{product}\uparrow.\textit{productNumber}}$ $\times$ \textit{produces}$\uparrow$\textit{}[j].\textit{quantity}}; }\\
+\parbox{14cm}{\textsf{\textit{cost}$\leftarrow$ 0}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{j}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{consumes}$\uparrow$.\textit{max}} \textbf{ do } }}\\
+\-\parbox{14cm}{\textsf{\textit{cost}$\leftarrow$ \textit{cost} + \textit{derivativeOfProductHarmony}$_{\textit{consumes}\uparrow\textit{}[\textit{j}].\textit{product}\uparrow.\textit{productNumber}}$ $\times$ \textit{consumes}$\uparrow$\textit{}[j].\textit{quantity}}; }\\
+\\
+\parbox{14cm}{\textsf{\textbf{writeln} \textit{(} \textit{techniqueno} ,\textrm{\textup { `,' } },\textit{produces} \textit{\^{}} [1].\textit{product} \textit{\^{}} . \textit{productNumber} ,\textrm{\textup { `, ' } },\textit{gain} ,\textrm{\textup { `,' } },\textit{cost} );}}\\
+\parbox{14cm}{\textsf{\textit{rateofharmonygain}$\leftarrow$ $\frac{\textit{gain} - \textit{cost}}{\textit{cost}}$}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{hash}\label{sec:technologieshash}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{hash} \textit{(} \textit{s} :\textbf{string} ):\textit{integer} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{i}, \textit{j} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{Let \textit{j} $\in$ =1;}}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{ \textit{i} := 1 } \textbf{ to } \textsf{ \textit{length} \textit{(} \textit{s} ) } \textbf{ do } }}\\
+\-\parbox{14cm}{\textsf{Let \textit{j} $\in$ = (j*11 +ord(s[i]) ) and maxint;}}\\
+\parbox{14cm}{\textsf{Let \textit{hash} $\in$ =j;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\+\textsf{\textbf{function}   \textit{defineResource} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;\textbf{name} :\textit{resourceid} ;\textit{number} :\textit{integer} ):\textit{presource} ;} (see Section \ref{sec:technologies/hashdefineResource} )\\
+\\
+\parbox{14cm}{\textsf{\textit{defineResource}$\leftarrow$ \textit{t}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\textsf{\textbf{function}   \textit{defineproductlist} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;\textbf{name} :\textbf{string} ; \textit{p} :\textit{pproductlist} ;\textit{number} :\textit{integer} ):\textit{pproductlist} ;} (see Section \ref{sec:technologies/hashdefineproductlist} )\\
+\end{tabbing}
+\section{printtechnique}\label{sec:technologies/logComplexprinttechnique}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{printtechnique} \textit{(} \textbf{var}  \textit{t} :\textit{technique} );}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{i} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{\textit{t}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{writeln} \textit{(} \textit{f} ,\textrm{\textup { `technique,' } },\textit{techniqueno} );}}\\
+\parbox{14cm}{\textsf{\textbf{write}(\textit{f}, \textit{\textrm{\textup { `inputs' } }})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{consumes}$\uparrow$.\textit{max}} \textbf{ do } }}\\
+\-\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textit{f} ,\textrm{\textup { `,' } },\textit{consumes} \textit{\^{}} [\textit{i} ].\textit{product} \textit{\^{}} .\textit{productnumber} );}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{f})}; }\\
+\parbox{14cm}{\textsf{\textbf{write}(\textit{f}, \textit{\textrm{\textup { `outputs' } }})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{produces}$\uparrow$.\textit{max}} \textbf{ do } }}\\
+\-\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textit{f} ,\textrm{\textup { `,' } },\textit{produces} \textit{\^{}} [\textit{i} ].\textit{product} \textit{\^{}} .\textit{productnumber} );}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{f})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{rect}\label{sec:technologies/logComplexrect}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{rect} \textit{(} \textit{te} :\textit{ptechniquelist} );}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf{\textbf{else} }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{rect} (\textit{te}$\uparrow$.\textit{next})}; }\\
+\parbox{14cm}{\textsf{\textit{printtechnique} (\textit{te}$\uparrow$.\textit{tech}$\uparrow$\textit{})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{defineResource}\label{sec:technologies/hashdefineResource}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}   \textit{defineResource} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;\textbf{name} :\textit{resourceid} ;\textit{number} :\textit{integer} ):\textit{presource} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{t} $\in$ presource;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{t} );}}\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{ \textit{t} \textit{\^{}}  } \textbf{ do } \textsf{ } \textbf{ with } \textsf{ \textit{ct}  } \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{id}$\leftarrow$ \textit{name}}; }\\
+\parbox{14cm}{\textsf{\textit{productcount}$\leftarrow$ \textit{number}}; }\\
+\parbox{14cm}{\textsf{\textit{productNumber}$\leftarrow$ \textit{productcount}}; }\\
+\parbox{14cm}{\textsf{\textit{users}$\leftarrow$ \textit{nil}}; }\\
+\parbox{14cm}{\textsf{\textit{producers}$\leftarrow$ \textit{nil}}; }\\
+\\
+\parbox{14cm}{\textsf{\textit{allresourceindex}$\uparrow$\textit{}[productnumber]$\leftarrow$ \textit{t}}; }\\
+\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{defineproductlist}\label{sec:technologies/hashdefineproductlist}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}   \textit{defineproductlist} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;\textbf{name} :\textbf{string} ; \textit{p} :\textit{pproductlist} ;\textit{number} :\textit{integer} ):\textit{pproductlist} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{pntr} $\in$ pproductlist;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{pntr} );}}\\
+\parbox{14cm}{\textsf{Let \textit{pntr}$\uparrow$.\textit{next} $\in$ =p;}}\\
+\parbox{14cm}{\textsf{\textit{pntr} \textit{\^{}} .\textit{product} :=\textit{defineResource} \textit{(} \textit{ct} ,\textbf{name} ,\textit{number} );}}\\
+\parbox{14cm}{\textsf{Let \textit{defineproductlist} $\in$ =pntr;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\+\textsf{\textbf{function}   \textit{findproduct} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;  \textbf{name} :\textbf{string} ):\textit{presource} ;} (see Section \ref{sec:technologies/hash/defineproductlistfindproduct} )\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\textsf{\textbf{procedure}   \textit{addproduct} \textit{(}  \textbf{var}  \textit{ct} :\textit{tc} ; \textbf{name} :\textbf{string} ;\textit{number} :\textit{integer} );} (see Section \ref{sec:technologies/hash/defineproductlistaddproduct} )\\
+\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\textsf{\textbf{function}   \textit{buildIndex} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;\textit{produces} :\textit{boolean} ):\textit{pdvec}  ;} (see Section \ref{sec:technologies/hash/defineproductlistbuildIndex} )\\
+\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\textsf{\textbf{function}   \textit{buildProducerIndex} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ):\textit{pdvec}  ;} (see Section \ref{sec:technologies/hash/defineproductlistbuildProducerIndex} )\\
+\end{tabbing}
+\section{findproduct}\label{sec:technologies/hash/defineproductlistfindproduct}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}   \textit{findproduct} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;  \textbf{name} :\textbf{string} ):\textit{presource} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{h} $\in$ integer;}}\\
+\parbox{14cm}{\textsf{Let \textit{p} $\in$ pproductlist;}}\\
+\parbox{14cm}{\textsf{Let \textit{ok} $\in$ boolean;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{Let \textit{h} $\in$ =hash(name) ;}}\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{ \textit{ct}  } \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{h}$\leftarrow$ \textit{h}  \textit{rem}  \textit{index}  $\uparrow$.\textit{max}}; }\\
+\\
+\parbox{14cm}{\textsf{\textit{p}$\leftarrow$ \textit{index}$\uparrow$\textit{}[h]}; }\\
+\parbox{14cm}{\textsf{\textit{ok}$\leftarrow$ \textit{p} $\neq$ \textit{nil}}; }\\
+\+\parbox{14cm}{\textsf {\textbf {while } \textsf{\textit{ok}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\\
+\parbox{14cm}{\textsf{\textit{ok}$\leftarrow$ \textbf{not}(\textit{p}$\uparrow$.\textit{product}$\uparrow$.\textit{id} $=$ \textit{name})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{ok}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{p}$\leftarrow$ \textit{p}$\uparrow$.\textit{next}}; }\\
+\parbox{14cm}{\textsf{\textit{ok}$\leftarrow$ \textit{p} $\neq$ \textit{nil}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{p} $=$ \textit{nil}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `product ' } }}, \textit{name}, \textit{\textrm{\textup { ` not found' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{exit} \textit{(} 401);}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{p} $=$ \textit{nil}} \textbf{ then } \textsf{\textit{findproduct}$\leftarrow$ \textit{nil}}}}\\
+\-\<\parbox{14cm}{\textsf {\textbf {else } \textsf{\textit{findproduct}$\leftarrow$ \textit{p}$\uparrow$.\textit{product}}; }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{addproduct}\label{sec:technologies/hash/defineproductlistaddproduct}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}   \textit{addproduct} \textit{(}  \textbf{var}  \textit{ct} :\textit{tc} ; \textbf{name} :\textbf{string} ;\textit{number} :\textit{integer} );}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{h} $\in$ integer;}}\\
+\parbox{14cm}{\textsf{Let \textit{p} $\in$ pproductlist;}}\\
+\parbox{14cm}{\textsf{Let \textit{ok} $\in$ boolean;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{Let \textit{h} $\in$ =hash(name) ;}}\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{ \textit{ct}  } \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{h}$\leftarrow$ \textit{h}  \textit{rem}  \textit{index}  $\uparrow$.\textit{max}}; }\\
+\\
+\parbox{14cm}{\textsf{\textit{p}$\leftarrow$ \textit{index}$\uparrow$\textit{}[h]}; }\\
+\parbox{14cm}{\textsf{\textit{ok}$\leftarrow$ \textit{p} $\neq$ \textit{nil}}; }\\
+\+\parbox{14cm}{\textsf {\textbf {while } \textsf{\textit{ok}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{ok}$\leftarrow$ \textit{p}$\uparrow$.\textit{product}$\uparrow$.\textit{id} $\neq$ \textit{name}}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{ok}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{p}$\leftarrow$ \textit{p}$\uparrow$.\textit{next}}; }\\
+\parbox{14cm}{\textsf{\textit{ok}$\leftarrow$ \textit{p} $\neq$ \textit{nil}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{p} $=$ \textit{nil}} \textbf{ then } \textsf{\textit{index}$\uparrow$\textit{}[h]$\leftarrow$ \textit{defineproductlist} (\textit{ct}, \textit{name}, \textit{index}$\uparrow$\textit{}[h], \textit{number})}; }}\\
+\parbox{14cm}{\texttt{\small{\{ if p$ \mathrm{<} $$ \mathrm{>} $nil then product already defined \}}}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{buildIndex}\label{sec:technologies/hash/defineproductlistbuildIndex}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}   \textit{buildIndex} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;\textit{produces} :\textit{boolean} ):\textit{pdvec}  ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{locindex} $\in$ pdvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{I}, \textit{j}, \textit{k}, \textit{l} $\in$ integer;}}\\
+\parbox{14cm}{\textsf{Let \textit{p} $\in$ ptechniquelist;}}\\
+\parbox{14cm}{\textsf{Let \textit{t} $\in$ technique;}}\\
+\parbox{14cm}{\textsf{Let \textit{producercount} $\in$ pintvec;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{ \textit{ct}  } \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{(} \textit{(} \textit{producerIndex} =\textit{nil} )} \textbf{ and } \textsf{ \textit{produces} )\textbf{or}  \textit{(} \textit{(} \textit{userIndex} =\textit{nil} )} \textbf{ and } \textsf{ \textbf{not}  \textit{produces} )} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{// \textbf{if}  \textit{produces}  \textbf{then}  \textbf{writeln} \textit{(} \textrm{\textup { `buildproducerindex' } }) \textbf{else}  \textbf{writeln}  \textit{(} \textrm{\textup { `builduserindex' } });}}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(}  \textit{locindex} ,\textit{productcount}  );}}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{producercount} , \textit{productcount} );}}\\
+\parbox{14cm}{\textsf{\textit{p}$\leftarrow$ \textit{techniqueslist}}; }\\
+\parbox{14cm}{\textsf{\textit{producercount}$\uparrow$\textit{}$\leftarrow$ 0}; }\\
+\+\parbox{14cm}{\textsf {\textbf {while } \textsf{\textit{p} $\neq$ \textit{nil}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{t}$\leftarrow$ \textit{p}$\uparrow$.\textit{tech}$\uparrow$\textit{}}; }\\
+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{produces}} \textbf{ then } \textsf{\textit{l}$\leftarrow$ \textit{t.produces}$\uparrow$.\textit{max}} \textbf{ else } \textsf{\textit{l}$\leftarrow$ \textit{t.consumes}$\uparrow$.\textit{max}}; }}\\
+\parbox{14cm}{\textsf{//  \textbf{writeln} \textit{(} \textrm{\textup { `technique ' } }, \textit{t} .\textit{techniqueno} ,\textrm{\textup { `length of ' } },\textit{(} \textbf{if}  \textit{produces}  \textbf{then}  \textrm{\textup { `produces' } } \textbf{else}  \textrm{\textup { `consumes' } }),\textrm{\textup { ` list =' } },\textit{l} );}}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{l}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{produces}} \textbf{ then } \textsf{\textit{k}$\leftarrow$ \textit{t.produces}$\uparrow$\textit{}[i].\textit{product}$\uparrow$.\textit{productnumber}}}}\\
+\-\<\parbox{14cm}{\textsf {\textbf {else } \textsf{\textit{k}$\leftarrow$ \textit{t.consumes}$\uparrow$\textit{}[i].\textit{product}$\uparrow$.\textit{productnumber}}; }}\\
+\parbox{14cm}{\textsf{\textit{producercount}$\uparrow$\textit{}[k]$\leftarrow$ \textit{producercount}$\uparrow$\textit{}[k] + 1}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{p}$\leftarrow$ \textit{p}$\uparrow$.\textit{next}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{//         \textbf{writeln} \textit{(} \textrm{\textup { `producercounts' } });}}\\
+\parbox{14cm}{\textsf{//         \textbf{writeln} \textit{(} \textit{producercount} \textit{\^{}} );}}\\
+\parbox{14cm}{\textsf{\textit{p}$\leftarrow$ \textit{techniqueslist}}; }\\
+\<\<\<\parbox{3.5cm}{\scriptsize{create a vector of producers}}\'\>\>\>\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{productcount}} \textbf{ do } \textsf{\textbf{new}(\textit{locindex}$\uparrow$\textit{}[i], \textit{producercount}$\uparrow$\textit{}[i])}; }}\\
+\+\parbox{14cm}{\textsf {\textbf {while } \textsf{\textit{p} $\neq$ \textit{nil}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{t}$\leftarrow$ \textit{p}$\uparrow$.\textit{tech}$\uparrow$\textit{}}; }\\
+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{produces}} \textbf{ then } \textsf{\textit{l}$\leftarrow$ \textit{t.produces}$\uparrow$.\textit{max}} \textbf{ else } \textsf{\textit{l}$\leftarrow$ \textit{t.consumes}$\uparrow$.\textit{max}}; }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{l}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{produces}} \textbf{ then } \textsf{\textit{j}$\leftarrow$ \textit{t.produces}$\uparrow$\textit{}[i].\textit{product}$\uparrow$.\textit{productnumber}}}}\\
+\-\<\parbox{14cm}{\textsf {\textbf {else } \textsf{\textit{j}$\leftarrow$ \textit{t.consumes}$\uparrow$\textit{}[i].\textit{product}$\uparrow$.\textit{productnumber}}; }}\\
+\parbox{14cm}{\textsf{\textit{k}$\leftarrow$ \textit{producercount}$\uparrow$\textit{}[j]}; }\\
+\\
+\parbox{14cm}{\textsf{\textit{locindex}$\uparrow$\textit{}[j]$\uparrow$\textit{}[k]$\leftarrow$ \textit{p}$\uparrow$.\textit{tech}}; }\\
+\parbox{14cm}{\textsf{\textit{producercount}$\uparrow$\textit{}[j]$\leftarrow$ \textit{k} - 1}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{p}$\leftarrow$ \textit{p}$\uparrow$.\textit{next}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{produces}} \textbf{ then } }}\\
+\parbox{14cm}{\textsf{\textit{producerIndex}$\leftarrow$ \textit{locindex}}}\\
+\<\parbox{14cm}{\textsf {\textbf {else } \textsf{\textit{userindex}$\leftarrow$ \textit{locindex}}}}\\
+\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{produces}} \textbf{ then } }}\\
+\parbox{14cm}{\textsf{\textit{buildIndex}$\leftarrow$ \textit{producerIndex}}}\\
+\-\<\parbox{14cm}{\textsf {\textbf {else } \textsf{\textit{buildIndex}$\leftarrow$ \textit{userindex}}; }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{buildProducerIndex}\label{sec:technologies/hash/defineproductlistbuildProducerIndex}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}   \textit{buildProducerIndex} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ):\textit{pdvec}  ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin}  \textit{buildproducerindex} := \textit{buildIndex} \textit{(} \textit{ct} ,\textbf{true} );}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{function}   \textit{buildUserIndex} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ):\textit{pdvec}  ;} (see Section \ref{sec:technologies/hash/defineproductlist/buildProducerIndexbuildUserIndex} )\\
+\end{tabbing}
+\section{buildUserIndex}\label{sec:technologies/hash/defineproductlist/buildProducerIndexbuildUserIndex}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}   \textit{buildUserIndex} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ):\textit{pdvec}  ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin}  \textit{builduserindex} := \textit{buildindex} \textit{(} \textit{ct} ,\textbf{false} );}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{procedure}   \textit{defineComplex} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;\textit{numberofproducts} :\textit{integer} );} (see Section \ref{sec:technologies/hash/defineproductlist/buildProducerIndex/buildUserIndexdefineComplex} )\\
+\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\textsf{\textbf{function}   \textit{defineTechnique} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;\textbf{var}  \textit{inputs} ,\textit{outputs} :\textit{resourcevec}  ):\textit{ptechnique} ;} (see Section \ref{sec:technologies/hash/defineproductlist/buildProducerIndex/buildUserIndexdefineTechnique} )\\
+\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\\
+\parbox{14cm}{\textsf{\textbf{end} .}}\\
+\\
+\\
+\end{tabbing}
+\section{defineComplex}\label{sec:technologies/hash/defineproductlist/buildProducerIndex/buildUserIndexdefineComplex}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}   \textit{defineComplex} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;\textit{numberofproducts} :\textit{integer} );}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{complex} $\in$ technologycomplex;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{//  \textbf{writeln} \textit{(} \textrm{\textup { `definecomplex ' } },\textit{numberofproducts} );}}\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{ \textit{ct}  } \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{index} ,\textit{(} \textit{numberofproducts}  \textbf{div}  2)+1);}}\\
+\\
+\parbox{14cm}{\textsf{\textbf{new}  \textit{(} \textit{nonproduced} , \textit{numberofproducts} );}}\\
+\parbox{14cm}{\textsf{\textit{nonproduced}$\uparrow$\textit{}$\leftarrow$ \textit{false}}; }\\
+\parbox{14cm}{\textsf{\textbf{new}  \textit{(} \textit{nonfinal} ,\textit{numberofproducts} );}}\\
+\parbox{14cm}{\textsf{\textit{nonfinal}$\uparrow$\textit{}$\leftarrow$ \textit{false}}; }\\
+\parbox{14cm}{\textsf{\textit{techniquesvec}$\leftarrow$ \textit{nil}}; }\\
+\parbox{14cm}{\textsf{\textit{techniqueslist}$\leftarrow$ \textit{nil}}; }\\
+\parbox{14cm}{\textsf{\textit{techniquecount}$\leftarrow$ 0}; }\\
+\parbox{14cm}{\textsf{\textit{productcount}$\leftarrow$ 0}; }\\
+\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{allresourceindex} ,\textit{numberofproducts} );}}\\
+\parbox{14cm}{\textsf{\textit{allresourceindex}$\uparrow$\textit{}$\leftarrow$ \textit{nil}}; }\\
+\parbox{14cm}{\textsf{\textit{index}$\uparrow$\textit{}$\leftarrow$ \textit{nil}}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{defineTechnique}\label{sec:technologies/hash/defineproductlist/buildProducerIndex/buildUserIndexdefineTechnique}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}   \textit{defineTechnique} \textit{(} \textbf{var}  \textit{ct} :\textit{tc} ;\textbf{var}  \textit{inputs} ,\textit{outputs} :\textit{resourcevec}  ):\textit{ptechnique} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{t} $\in$ ptechnique;}}\\
+\parbox{14cm}{\textsf{Let \textit{i} $\in$ integer;}}\\
+\<\parbox{14cm}{\textsf {\textbf {var } \textsf{Let \textit{tl} $\in$ ptechniquelist;}}}\\
+\<\textsf{\textbf{procedure}  \textit{adduser} \textit{(} \textit{product} :\textit{presource}  );} (see Section \ref{sec:technologies/hash/defineproductlist/buildProducerIndex/buildUserIndex/defineTechniqueadduser} )\\
+\parbox{14cm}{\textsf{\textit{product}$\uparrow$.\textit{users}$\leftarrow$ \textit{l}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\textsf{\textbf{procedure}  \textit{addproducer} \textit{(} \textit{product} :\textit{presource}  );} (see Section \ref{sec:technologies/hash/defineproductlist/buildProducerIndex/buildUserIndex/defineTechniqueaddproducer} )\\
+\parbox{14cm}{\textsf{\textit{product}$\uparrow$.\textit{producers}$\leftarrow$ \textit{l}}; }\\
+\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{\textit{ct}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{t} );}}\\
+\parbox{14cm}{\textsf{\textit{techniqueCount}$\leftarrow$ \textit{techniqueCount} + 1}; }\\
+\parbox{14cm}{\textsf{//\textbf{writeln} \textit{(} \textrm{\textup { `def tech ' } },\textit{techniquecount} , \textrm{\textup { ` with ' } }, \textit{inputs} .\textbf{max} ,\textrm{\textup { ` inputs and ' } },\textit{outputs} .\textbf{max} ,\textrm{\textup { ` outputs' } });}}\\
+\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{\textit{t}$\uparrow$\textit{}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{techniqueno}$\leftarrow$ \textit{techniquecount}}; }\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{produces} ,\textit{outputs} .\textbf{max} );}}\\
+\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{consumes} ,\textit{inputs} .\textbf{max} );}}\\
+\parbox{14cm}{\textsf{\textit{produces}$\uparrow$\textit{}$\leftarrow$ \textit{outputs}}; }\\
+\parbox{14cm}{\textsf{\textit{consumes}$\uparrow$\textit{}$\leftarrow$ \textit{inputs}}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{outputs.max}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{outputs}$_{\textit{i}}$.\textit{product} $=$ \textit{nil}} \textbf{ then } }}\\
+\-\-\+\parbox{14cm}{\textsf{\textbf{begin}  \textbf{writeln} \textit{(} \textrm{\textup { `null product in outputs' } },\textit{i} ) ;}}\\
+\parbox{14cm}{\textsf{\textit{halt} (300)}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\+\parbox{14cm}{\textsf{\textbf{else} }}\\
+\-\parbox{14cm}{\textsf{\textit{addproducer} (\textit{outputs}$_{\textit{i}}$.\textit{product})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{inputs.max}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{inputs}$_{\textit{i}}$.\textit{product} $=$ \textit{nil}} \textbf{ then } }}\\
+\-\-\+\parbox{14cm}{\textsf{\textbf{begin}  \textbf{writeln} \textit{(} \textrm{\textup { `null product in inputs' } },\textit{i} ) ;}}\\
+\parbox{14cm}{\textsf{\textit{halt} (300)}; }\\
+\+\<\-\<\-\parbox{14cm}{\textsf{\textbf{end}  \textbf{else} }}\\
+\parbox{14cm}{\textsf{\textit{adduser} (\textit{inputs}$_{\textit{i}}$.\textit{product})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\parbox{14cm}{\textsf{\textbf{new}  \textit{(} \textit{tl} );}}\\
+\parbox{14cm}{\textsf{\textit{tl}$\uparrow$.\textit{tech}$\leftarrow$ \textit{t}}; }\\
+\parbox{14cm}{\textsf{\textit{tl}$\uparrow$.\textit{next}$\leftarrow$ \textit{techniqueslist}}; }\\
+\parbox{14cm}{\textsf{\textit{techniqueslist}$\leftarrow$ \textit{tl}}; }\\
+\parbox{14cm}{\textsf{\textit{definetechnique}$\leftarrow$ \textit{t}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{adduser}\label{sec:technologies/hash/defineproductlist/buildProducerIndex/buildUserIndex/defineTechniqueadduser}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{adduser} \textit{(} \textit{product} :\textit{presource}  );}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{l} $\in$ ptechniquelist;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{// \textbf{writeln} \textit{(} \textrm{\textup { `adduser ' } },\textit{product} \textit{\^{}} .\textit{productnumber} , \textit{product} \textit{\^{}} .\textit{id} );}}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{l} );}}\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{ \textit{l} \textit{\^{}}  } \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{tech}$\leftarrow$ \textit{t}}; }\\
+\parbox{14cm}{\textsf{\textit{next}$\leftarrow$ \textit{product}$\uparrow$.\textit{users}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{addproducer}\label{sec:technologies/hash/defineproductlist/buildProducerIndex/buildUserIndex/defineTechniqueaddproducer}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{addproducer} \textit{(} \textit{product} :\textit{presource}  );}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{l} $\in$ ptechniquelist;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{//  \textbf{writeln} \textit{(} \textrm{\textup { `addproducer ' } },\textit{product} \textit{\^{}} .\textit{productnumber} , \textit{product} \textit{\^{}} .\textit{id} );}}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{l} );}}\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{ \textit{l} \textit{\^{}}  } \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{tech}$\leftarrow$ \textit{t}}; }\\
+\parbox{14cm}{\textsf{\textit{next}$\leftarrow$ \textit{product}$\uparrow$.\textit{producers}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}

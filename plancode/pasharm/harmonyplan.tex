@@ -1,0 +1,621 @@
+\documentclass[10pt, a4paper]{article}
+\usepackage{graphicx, epsfig}
+\reversemarginpar
+\title{harmonyplan.pas}
+\begin{document}
+\maketitle
+
+\tableofcontents
+\section{harmonyplan}
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{program}  \textit{harmonyplan} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{uses}   \textit{technologies} ,\textit{harmony} ,\textit{csvfilereader} ;}}\\
+\\
+\<\parbox{14cm}{\textsf{\textbf{type} }}\\
+\parbox{14cm}{\textsf{\textit{pmat} =\textit{\^{}} \textit{matrix} ;}}\\
+\+\parbox{14cm}{\textsf{\textit{channel} = \textbf{record} }}\\
+\parbox{14cm}{\textsf{\textit{p} : \textit{pcsv}}; }\\
+\parbox{14cm}{\textsf{\textit{r} : \textit{pheadervec}}; }\\
+\parbox{14cm}{\textsf{\textit{c} : \textit{pheadervec}}; }\\
+\parbox{14cm}{\textsf{\textit{m} : $\uparrow$ \textit{matrix} }; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{matrices: \textbf{ array } \textsf{[1..4] } \textbf{ of } \textsf{ \textit{pmat} ;}}\\
+\<\textsf{\textbf{procedure}  \textit{rf} \textit{(} \textbf{var}  \textit{ch} :\textit{channel} ;\textit{param} :\textit{integer}  );} (see Section \ref{sec:harmonyplanrf} )\\
+\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{flows}, \textit{caps}, \textit{deps}, \textit{targs} $\in$ channel;}}\\
+\parbox{14cm}{\textsf{Let \textit{outputs}, \textit{compressedDeprates}, \textit{labour}, \textit{initialResource}, \textit{targets}, \textit{intensities} $\in$ pvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{i}, \textit{j}, \textit{k}, \textit{lr}, \textit{y}, \textit{year}, \textit{maxprod}, \textit{years}, \textit{capitals}, \textit{cn} $\in$ integer;}}\\
+\parbox{14cm}{\textsf{Let \textit{yearXproductIntensityIndex} $\in$ \^{}matrix;}}\\
+\parbox{14cm}{\textsf{Let \textit{relativecapnum} $\in$ \^{}matrix;}}\\
+\parbox{14cm}{\textsf{Let \textit{flow} $\in$ real;}}\\
+\parbox{14cm}{\textsf{Let \textit{t} $\in$ ptechnique;}}\\
+\parbox{14cm}{\textsf{Let \textit{inputs}, \textit{toutputs} $\in$ presourcevec;}}\\
+\parbox{14cm}{\textsf{Let \textit{capnumtoflownum} $\in$ pintvec;}}\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{C} $\in$ \^{}TechnologyComplex ;}}\\
+\parbox{14cm}{\textsf{Let \textit{si}, \textit{sj}, \textit{sy} $\in$ string[10];}}\\
+\parbox{14cm}{\textsf{Let \textit{start}, \textit{stop} $\in$ double;}}\\
+\<\textsf{\textbf{function}  \textit{deprate} \textit{(} \textit{capitaltype} :\textit{integer} ):\textit{real} ;} (see Section \ref{sec:harmonyplandeprate} )\\
+\<\textsf{\textbf{function}  \textit{countyears} \textit{(} \textit{heads} :\textit{pheadervec} ) :\textit{integer} ;} (see Section \ref{sec:harmonyplancountyears} )\\
+\<\textsf{\textbf{function}  \textit{outputrowinheaders} :\textit{integer} ;} (see Section \ref{sec:harmonyplanoutputrowinheaders} )\\
+\<\textsf{\textbf{function}  \textit{labourRow} :\textit{integer} ;} (see Section \ref{sec:harmonyplanlabourRow} )\\
+\<\textsf{\textbf{function}  \textit{capnum} \textit{(}  \textit{prod} , \textit{year} , \textit{maxcap} :\textit{integer} ) :\textit{integer} ;} (see Section \ref{sec:harmonyplancapnum} )\\
+\<\textsf{\textbf{function}  \textit{countnonzero} \textit{(} \textbf{var}  \textit{m} :\textit{matrix} ):\textit{integer} ;} (see Section \ref{sec:harmonyplancountnonzero} )\\
+\<\textsf{\textbf{function}  \textit{countinputsTo} \textit{(}  \textit{industry} :\textit{integer} ) :\textit{integer} ;} (see Section \ref{sec:harmonyplancountinputsTo} )\\
+\<\textsf{\textbf{function}  \textit{flownum} \textit{(}  \textit{prod} ,  \textit{year} :\textit{integer} ):\textit{integer} ;} (see Section \ref{sec:harmonyplanflownum} )\\
+\<\textsf{\textbf{function}  \textit{capname} \textit{(} \textit{row} ,\textit{col} ,\textit{year} :\textit{integer} ):\textbf{string} ;} (see Section \ref{sec:harmonyplancapname} )\\
+\<\textsf{\textbf{function}  \textit{productName} \textit{(} \textit{prod} ,  \textit{year} ,\textit{internalcode} :\textit{integer} ) :\textbf{string} ;} (see Section \ref{sec:harmonyplanproductName} )\\
+\<\textsf{\textbf{procedure}  \textit{flowsourcedfromTo} \textit{(} \textit{year} ,\textit{row} ,\textit{col} :\textit{integer} );} (see Section \ref{sec:harmonyplanflowsourcedfromTo} )\\
+\<\textsf{\textbf{procedure}  \textit{flowsOriginatingIn} \textit{(} \textit{year} :\textit{integer} );} (see Section \ref{sec:harmonyplanflowsOriginatingIn} )\\
+\<\textsf{\textbf{procedure}  \textit{printResults} \textit{(} \textbf{var}  \textit{c} :\textit{TechnologyComplex} ; \textbf{var}  \textit{intensity} ,  \textit{initialResource} :\textit{vector} ) ;} (see Section \ref{sec:harmonyplanprintResults} )\\
+\<\textsf{\textbf{procedure}  \textit{setupintertermporalflow} ;} (see Section \ref{sec:harmonyplansetupintertermporalflow} )\\
+\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{tv} $\in$ ptvec;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{rf} (\textit{flows}, 1)}; }\\
+\parbox{14cm}{\textsf{\textit{rf} (\textit{caps}, 2)}; }\\
+\parbox{14cm}{\textsf{\textit{rf} (\textit{deps}, 3)}; }\\
+\parbox{14cm}{\textsf{\textit{rf} (\textit{targs}, 4)}; }\\
+\parbox{14cm}{\textsf{// \textit{go}  \textit{through}  \textit{the}  \textit{targets}  \textit{matrix}  \textbf{and}  \textit{make}  \textit{sure}  \textit{no}  \textit{targets}  \textit{are}  \textit{actually}  \textit{zero}  - \textit{make}  \textit{them}  \textit{very}  \textit{small}  \textit{positive}  \textit{amounts} }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{targs.m}$\uparrow$.\textit{rows}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{j}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{targs.m}$\uparrow$.\textit{cols}} \textbf{ do } }}\\
+\-\-\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{targs.m}$\uparrow$\textit{}[i])} \textbf{ then } \textsf{\textit{targs.m}$\uparrow$\textit{}[i]$\leftarrow$ 1 - \textit{Harmony.capacitytarget}}; }}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{outputs} ,\textit{flows} .\textit{m} \textit{\^{}} .\textit{cols} );}}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{labour} ,\textit{flows} .\textit{m} \textit{\^{}} .\textit{cols} );}}\\
+\parbox{14cm}{\textsf{\textit{outputs}$\uparrow$\textit{}$\leftarrow$ \textit{flows.m}$\uparrow$\textit{}[outputrowinheaders]}; }\\
+\parbox{14cm}{\textsf{\textit{labour}$\uparrow$\textit{}$\leftarrow$ \textit{flows.m}$\uparrow$\textit{}[labourRow]}; }\\
+\parbox{14cm}{\textsf{\textit{years}$\leftarrow$ \textit{countyears} (\textit{targs.r})}; }\\
+\\
+\parbox{14cm}{\textsf{\textit{maxprod}$\leftarrow$ \textit{flows.m}$\uparrow$.\textit{cols}}; }\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{yearXproductIntensityIndex} ,\textit{years} ,\textit{maxprod} +2);}}\\
+\\
+\parbox{14cm}{\textsf{\textit{capitals}$\leftarrow$ \textit{countnonzero} (\textit{caps.m}$\uparrow$\textit{})}; }\\
+\parbox{14cm}{\textsf{//\textbf{writeln} \textit{(} \textrm{\textup { `maxprod' } }, \textit{maxprod} , \textrm{\textup { `capitals' } }, \textit{capitals} ,\textrm{\textup { ` years' } }, \textit{years} );}}\\
+\parbox{14cm}{\textsf{// \textit{work}  \textit{out}  \textit{how}  \textit{many}  \textit{products}  \textit{the}  \textit{harmonizer}  \textit{will}  \textit{have}  \textbf{to}  \textit{solve}  \textbf{for} }}\\
+\+\parbox{14cm}{\textsf{// \textit{assume}  \textit{that}  \textit{we}  \textit{have}  \textit{N}  \textit{columns}  \textbf{in}  \textit{our}  \textit{table}  \textbf{and}  \textit{y}  \textit{years}  \textbf{then} }}\\
+\parbox{14cm}{\textsf{// \textit{we}  \textit{have}  \textit{Ny}  \textit{year}  \textit{product}  \textit{combinations} }}\\
+\parbox{14cm}{\textsf{// \textbf{in}  \textit{addition}  \textit{we}  \textit{have}  \textit{y}  \textit{labour}  \textit{variables} }}\\
+\parbox{14cm}{\textsf{// \textbf{and}  \textit{caps} .\textit{y}  \textit{capital}  \textit{stocks} }}\\
+\\
+\-\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{C} );}}\\
+\parbox{14cm}{\textsf{//\textbf{writeln} \textit{(} \textrm{\textup { `call definecomplex(' } },\textit{(} \textit{maxprod} +\textit{capitals} )*\textit{years} ,\textrm{\textup { `)' } });}}\\
+\parbox{14cm}{\textsf{\textit{definecomplex} (\textit{C}$\uparrow$\textit{}, (\textit{maxprod} + \textit{capitals} + 1) $\times$ \textit{years})}; }\\
+\parbox{14cm}{\textsf{//    \textbf{writeln} \textit{(} "productnum "+\textit{C} .\textit{productCount} \textit{(} )+" \textit{years}  "+\textit{years} );}}\\
+\parbox{14cm}{\textsf{// \textit{Assign}  \textit{identifiers}  \textbf{to}  \textit{the}  \textit{outputs} }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{maxprod} + 1} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{year}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{years}} \textbf{ do } }}\\
+\-\-\parbox{14cm}{\textsf{\textit{addproduct} (\textit{C}$\uparrow$\textit{}, \textit{productName} (\textit{i}, \textit{year}, \textit{flownum} (\textit{i}, \textit{year})), \textit{flownum} (\textit{i}, \textit{year}))}; }\\
+\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{maxprod}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{j}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{maxprod}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{year}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{years}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{caps.m}$\uparrow$\textit{}[i])} \textbf{ then } }}\\
+\-\-\-\-\parbox{14cm}{\textsf{\textit{addproduct} (\textit{C}$\uparrow$\textit{}, \textit{capname} (\textit{i}, \textit{j}, \textit{year}), \textit{capnum} (\textbf{round}(\textit{relativecapnum}$\uparrow$\textit{}[i]), \textit{year}, \textit{capitals}))}; }\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{year}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{years}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{// \textit{add}  \textit{a}  \textit{production}  \textit{technology}  \textbf{for}  \textit{each}  \textit{definite}  \textit{product} }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{maxprod}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{// \textbf{writeln} \textit{(} \textrm{\textup { `product ' } },\textit{i} ,\textrm{\textup { ` has ' } },\textit{countinputsTo} \textit{(} \textit{i} ),\textrm{\textup { ` inputs to it ' } });}}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{inputs} ,\textit{countinputsTo} \textit{(} \textit{i} ));}}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{toutputs} , 1);}}\\
+\parbox{14cm}{\textsf{\textit{j}$\leftarrow$ 1}; }\\
+\+\<\<\<\parbox{3.5cm}{\scriptsize{include labour}}\'\>\>\>\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{k}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{maxprod} + 1} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{flows.m}$\uparrow$\textit{}[k])} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{flow}$\leftarrow$ \textit{flows.m}$\uparrow$\textit{}[k]}; }\\
+\parbox{14cm}{\textsf{\textit{inputs}$\uparrow$\textit{}[j].\textit{quantity}$\leftarrow$ \textit{flow}}; }\\
+\parbox{14cm}{\textsf{\textit{inputs}$\uparrow$\textit{}[j].\textit{product}$\leftarrow$ \textit{findproduct} (\textit{C}$\uparrow$\textit{}, \textit{productName} (\textit{k}, \textit{year}, \textit{flownum} (\textit{k}, \textit{year})))}; }\\
+\parbox{14cm}{\textsf{\textit{j}$\leftarrow$ \textit{j} + 1}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{k} $\leq$ \textit{maxprod})} \textbf{ then } \textsf{ /   /  \textit{no}  \textit{labour}  \textit{row}    } \textbf{ for } \textsf{\textit{the}  \textit{capital}  \textit{matrix}  \textit{so}  \textit{we}  \textit{miss}  \textit{last}  \textit{row}       }}}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{caps.m}$\uparrow$\textit{}[k])} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{flow}$\leftarrow$ \textit{caps.m}$\uparrow$\textit{}[k]}; }\\
+\parbox{14cm}{\textsf{\textit{inputs}$\uparrow$\textit{}[j].\textit{quantity}$\leftarrow$ \textit{flow}}; }\\
+\parbox{14cm}{\textsf{\textit{inputs}$\uparrow$\textit{}[j].\textit{product}$\leftarrow$ \textit{findproduct} (\textit{C}$\uparrow$\textit{}, \textit{capName} (\textit{k}, \textit{i}, \textit{year}))}; }\\
+\parbox{14cm}{\textsf{\textit{j}$\leftarrow$ 1 + \textit{j}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{\textit{toutputs}$\uparrow$\textit{}[1]} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{quantity}$\leftarrow$ \textit{outputs}$\uparrow$\textit{}[i]}; }\\
+\parbox{14cm}{\texttt{\small{\{	product:=C\^.index\^[flownum(i,year)];\}}}}\\
+\parbox{14cm}{\textsf{\textit{product}$\leftarrow$ \textit{findproduct} (\textit{C}$\uparrow$\textit{}, \textit{productName} (\textit{i}, \textit{year}, \textit{flownum} (\textit{i}, \textit{year})))}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{//\textbf{writeln} \textit{(} \textrm{\textup { `year ' } },\textit{year} , \textrm{\textup { `of' } },\textit{years} ,\textrm{\textup { `first call define techniques' } });}}\\
+\parbox{14cm}{\textsf{\textit{t}$\leftarrow$ \textit{defineTechnique} (\textit{C}$\uparrow$\textit{}, \textit{inputs}$\uparrow$\textit{}, \textit{toutputs}$\uparrow$\textit{})}; }\\
+\parbox{14cm}{\textsf{\textit{yearXproductIntensityIndex}$\uparrow$\textit{}[year]$\leftarrow$ \textit{C}$\uparrow$.\textit{techniqueCount}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\parbox{14cm}{\textsf{\textit{setupintertermporalflow}}; }\\
+\end{tabbing}
+now set up the initial resource vector
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{initialResource}  ,\textit{C} \textit{\^{}} .\textit{productCount} );}}\\
+\end{tabbing}
+put in each years labour
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \\
+\parbox{14cm}{\textsf{\textit{lr}$\leftarrow$ \textit{labourRow}}; }\\
+\\
+\\
+\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{y}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{years}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{initialResource}$\uparrow$\textit{}[flownum (lr, y)]$\leftarrow$ \textit{targs.m}$\uparrow$\textit{}[y]}; }\\
+\parbox{14cm}{\textsf{\textit{C}$\uparrow$.\textit{nonproduced}$\uparrow$\textit{}[flownum (lr, y)]$\leftarrow$ \textit{true}}; }\\
+\parbox{14cm}{\textsf{\textit{C}$\uparrow$.\textit{nonfinal}$\uparrow$\textit{}[flownum (lr, y)]$\leftarrow$ \textit{true}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\end{tabbing}
+put in each years initial capital stock allowing for depreciation
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{caps.m}$\uparrow$.\textit{rows}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{j}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{caps.m}$\uparrow$.\textit{rows}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{caps.m}$\uparrow$\textit{}[i])} \textbf{ then } }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{y}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{years}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{cn}$\leftarrow$ \textit{capnum} (\textbf{round}(\textit{relativecapnum}$\uparrow$\textit{}[i]), \textit{y}, \textit{capitals})}; }\\
+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{verbose})} \textbf{ then } \textsf{ \textbf{writeln} \textit{(} \textit{i} ,\textrm{\textup { `,' } },\textit{j} ,\textrm{\textup { `,' } },\textit{y} ,\textrm{\textup { `,' } },\textit{cn} );}}}\\
+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{y} $=$ 1)} \textbf{ then } \textsf{\textit{C}$\uparrow$.\textit{nonproduced}$\uparrow$\textit{}[cn]$\leftarrow$ \textit{true}}; }}\\
+\parbox{14cm}{\textsf{\textit{C}$\uparrow$.\textit{nonfinal}$\uparrow$\textit{}[cn]$\leftarrow$ \textit{true}}; }\\
+\parbox{14cm}{\textsf{\textit{initialResource}$\uparrow$\textit{}[cn]$\leftarrow$ \textit{caps.m}$\uparrow$\textit{}[i]}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\\
+\end{tabbing}
+now set up the target vector
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{targets}  ,\textit{C} \textit{\^{}} .\textit{productCount} );}}\\
+\parbox{14cm}{\textsf{// \textit{initialise}  \textbf{to}  \textit{very}  \textit{small}  \textit{numbers}  \textbf{to}  \textit{prevent}  \textit{divide}  \textit{by}  \textit{zero} }}\\
+\\
+\parbox{14cm}{\textsf{\textit{targets}$\uparrow$\textit{}$\leftarrow$ 0.03}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{y}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{years}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{j}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{targs.m}$\uparrow$.\textit{cols} - 1} \textbf{ do } }}\\
+\parbox{14cm}{\texttt{\small{\{do not include the labour col of the targets\}}}}\\
+\-\-\parbox{14cm}{\textsf{\textit{targets}$\uparrow$\textit{}[flownum (j, y)]$\leftarrow$ \textit{targs.m}$\uparrow$\textit{}[y]}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{verbose})} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{logComplex} (\textit{C}$\uparrow$\textit{})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\parbox{14cm}{\textsf{\textit{start}$\leftarrow$ \textit{secs}}; }\\
+\\
+\parbox{14cm}{\textsf{\textit{intensities}$\leftarrow$ \textit{balancePlan} (\textit{targets}$\uparrow$\textit{}, \textit{initialResource}$\uparrow$\textit{}, \textit{C}$\uparrow$\textit{})}; }\\
+\parbox{14cm}{\textsf{\textit{stop}$\leftarrow$ \textit{secs}}; }\\
+\parbox{14cm}{\textsf{\textit{printResults} (\textit{C}$\uparrow$\textit{}, \textit{intensities}$\uparrow$\textit{}, \textit{initialResource}$\uparrow$\textit{})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `took ' } }}, ((\textit{stop} - \textit{start}) $\times$ 0.01), \textit{\textrm{\textup { ` sec' } }})}; }\\
+\\
+\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} .}}\\
+\end{tabbing}
+\section{rf}\label{sec:harmonyplanrf}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{rf} \textit{(} \textbf{var}  \textit{ch} :\textit{channel} ;\textit{param} :\textit{integer}  );}}\\
+\end{tabbing}
+Read in one of the file parameters and extract the data from it
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{\textit{ch}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{p}$\leftarrow$ \textit{parsecsvfile} (\textit{paramstr} (\textit{param}))}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{p} $=$ \textit{nil}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `error opening or parsing file ' } }}, \textit{paramstr} (\textit{param}))}; }\\
+\parbox{14cm}{\textsf{\textit{halt} (2)}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\parbox{14cm}{\textsf {\textbf {else } \textsf{ ;}}}\\
+\parbox{14cm}{\textsf{\textit{r}$\leftarrow$ \textit{getrowheaders} (\textit{p})}; }\\
+\parbox{14cm}{\textsf{\textit{c}$\leftarrow$ \textit{getcolheaders} (\textit{p})}; }\\
+\parbox{14cm}{\textsf{\textit{m}$\leftarrow$ \textit{getdatamatrix} (\textit{p})}; }\\
+\parbox{14cm}{\textsf{\textit{matrices}$_{\textit{param}}$$\leftarrow$ \textit{m}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{deprate}\label{sec:harmonyplandeprate}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{3.5cm}{\scriptsize{capitaltype is the compressed capital index}}\'\parbox{14cm}{\textsf{\textbf{function}  \textit{deprate} \textit{(} \textit{capitaltype} :\textit{integer} ):\textit{real} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{deprate}$\leftarrow$ \textit{compressedDeprates}$\uparrow$\textit{}[capitaltype]}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{countyears}\label{sec:harmonyplancountyears}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{countyears} \textit{(} \textit{heads} :\textit{pheadervec} ) :\textit{integer} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{i}, \textit{j} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{j}$\leftarrow$ 0}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{targs.r}$\uparrow$.\textit{max}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{heads}$\uparrow$\textit{}[i] $\neq$ \textit{nil})} \textbf{ then } }}\\
+\+\parbox{14cm}{\textsf{\textbf{then} }}\\
+\-\-\parbox{14cm}{\textsf{\textit{j}$\leftarrow$ \textit{j} + 1}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{countyears}$\leftarrow$ \textit{j}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{outputrowinheaders}\label{sec:harmonyplanoutputrowinheaders}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{outputrowinheaders} :\textit{integer} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{i}, \textit{j} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{j}$\leftarrow$ 0}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{flows.r}$\uparrow$.\textit{max}} \textbf{ do } }}\\
+\-\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{flows.r}$\uparrow$\textit{}[i].\textit{textual}$\uparrow$ $=$  (\textit{\textrm{\textup { `output' } }}) )} \textbf{ then } \textsf{\textit{j}$\leftarrow$ \textit{i}}; }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{j} $=$ 0} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `no output row found in flow matrix' } }})}; }\\
+\parbox{14cm}{\textsf{\textit{halt} (301)}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{outputrowinheaders}$\leftarrow$ \textit{j}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{labourRow}\label{sec:harmonyplanlabourRow}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{labourRow} :\textit{integer} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{i}, \textit{j} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{j}$\leftarrow$ 0}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{flows.r}$\uparrow$.\textit{max}} \textbf{ do } }}\\
+\-\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{flows.r}$\uparrow$\textit{}[i].\textit{textual}$\uparrow$ $=$  (\textit{\textrm{\textup { `labour' } }}) )} \textbf{ then } \textsf{\textit{j}$\leftarrow$ \textit{i}}; }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{j} $=$ 0} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `no labour row found in flow matrix' } }})}; }\\
+\parbox{14cm}{\textsf{\textit{halt} (301)}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{labourrow}$\leftarrow$ \textit{j}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{capnum}\label{sec:harmonyplancapnum}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{capnum} \textit{(}  \textit{prod} , \textit{year} , \textit{maxcap} :\textit{integer} ) :\textit{integer} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{capnum}$\leftarrow$ (\textit{prod}) + (\textit{year} - 1) $\times$ (\textit{maxcap}) + \textit{years} $\times$ (\textit{maxprod} + 1)}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{countnonzero}\label{sec:harmonyplancountnonzero}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{countnonzero} \textit{(} \textbf{var}  \textit{m} :\textit{matrix} ):\textit{integer} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{t}, \textit{i}, \textit{j} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{t}$\leftarrow$ 1}; }\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{relativecapnum} ,\textit{m} .\textit{rows} ,\textit{m} .\textit{cols} );}}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{m.rows}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{j}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{m.cols}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{m}$_{\textit{i}, \textit{j}}$ $>$ 0)} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{relativecapnum}$\uparrow$\textit{}[i]$\leftarrow$ \textit{t}}; }\\
+\parbox{14cm}{\textsf{\textit{t}$\leftarrow$ \textit{t} + 1}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{capnumtoflownum} ,\textit{t} -1);}}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{compressedDeprates} ,\textit{t} -1);}}\\
+\parbox{14cm}{\textsf{// \textit{pass}  \textit{through}  \textit{again}  \textit{filling}  \textbf{in}  \textit{the}  \textit{backwardvector} }}\\
+\parbox{14cm}{\textsf{//\textbf{writeln} \textit{(} \textit{t} );}}\\
+\parbox{14cm}{\textsf{\textit{t}$\leftarrow$ 1}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{m.rows}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{j}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{m.cols}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{m}$_{\textit{i}, \textit{j}}$ $>$ 0)} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{//  \textbf{writeln} \textit{(} \textit{i} ,\textit{j} ,\textit{t} );}}\\
+\parbox{14cm}{\textsf{\textit{capnumtoflownum}$\uparrow$\textit{}[t]$\leftarrow$ \textit{i}}; }\\
+\parbox{14cm}{\textsf{\textit{compressedDeprates}$\uparrow$\textit{}[t]$\leftarrow$ \textit{deps.m}$\uparrow$\textit{}[i]}; }\\
+\parbox{14cm}{\textsf{\textit{t}$\leftarrow$ \textit{t} + 1}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{countnonzero}$\leftarrow$ \textit{t} - 1}; }\\
+\<\-\<\-\<\-\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{countinputsTo}\label{sec:harmonyplancountinputsTo}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{countinputsTo} \textit{(}  \textit{industry} :\textit{integer} ) :\textit{integer} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{total}, \textit{i} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{total}$\leftarrow$ 0}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{maxprod} + 1} \textbf{ do } }}\\
+\-\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{flows.m}$\uparrow$\textit{}[i])} \textbf{ then } \textsf{\textit{total}$\leftarrow$ \textit{total} + 1}; }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{maxprod}} \textbf{ do } }}\\
+\-\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{caps.m}$\uparrow$\textit{}[i])} \textbf{ then } \textsf{\textit{total}$\leftarrow$ \textit{total} + 1}; }}\\
+\parbox{14cm}{\textsf{\textit{countinputsTo}$\leftarrow$ \textit{total}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{flownum}\label{sec:harmonyplanflownum}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{flownum} \textit{(}  \textit{prod} ,  \textit{year} :\textit{integer} ):\textit{integer} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{flownum}$\leftarrow$ (\textit{prod}) + (\textit{year} - 1) $\times$ (\textit{maxprod} + 1)}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{capname}\label{sec:harmonyplancapname}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{capname} \textit{(} \textit{row} ,\textit{col} ,\textit{year} :\textit{integer} ):\textbf{string} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{capname}$\leftarrow$ \textit{\textrm{\textup { `C[' } }} + \textit{int2str} (\textit{row}) + \textit{\textrm{\textup { `][' } }} + \textit{int2str} (\textit{col}) + \textit{\textrm{\textup { `]Y' } }} + \textit{int2str} (\textit{year})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{productName}\label{sec:harmonyplanproductName}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{productName} \textit{(} \textit{prod} ,  \textit{year} ,\textit{internalcode} :\textit{integer} ) :\textbf{string} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{productname}$\leftarrow$ \textit{flows.r}$\uparrow$\textit{}[prod].\textit{textual}$\uparrow$ +  \textit{\textrm{\textup { `Y' } }} + \textit{int2str} (\textit{year}) + \textit{\textrm{\textup { `\{' } }} + \textit{int2str} (\textit{internalcode}) + \textit{\textrm{\textup { `\}' } }} }; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{flowsourcedfromTo}\label{sec:harmonyplanflowsourcedfromTo}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{flowsourcedfromTo} \textit{(} \textit{year} ,\textit{row} ,\textit{col} :\textit{integer} );}}\\
+\end{tabbing}
+Generate investment technique starting from the specified year,
+directed at the specified row and col , with possible joint production
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{src}, \textit{dest} $\in$ presourcevec;}}\\
+\parbox{14cm}{\textsf{Let \textit{outputyears}, \textit{i} $\in$ integer;}}\\
+\parbox{14cm}{\textsf{Let \textit{t} $\in$ ptechnique;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\\
+\\
+\parbox{14cm}{\textsf{\textit{outputyears}$\leftarrow$ \textit{years} - \textit{year}}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{outputyears} $>$ 0} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{new}  \textit{(} \textit{src} ,1);}}\\
+\parbox{14cm}{\textsf{\textit{src}$\uparrow$\textit{}[1].\textit{product}$\leftarrow$ \textit{findproduct} (\textit{C}$\uparrow$\textit{}, \textit{productName} (\textit{row}, \textit{year}, \textit{flownum} (\textit{row}, \textit{year})))}; }\\
+\parbox{14cm}{\textsf{\textit{src}$\uparrow$\textit{}[1].\textit{quantity}$\leftarrow$ 1}; }\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{dest} ,\textit{outputyears} );}}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{outputyears}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{\textit{dest}$\uparrow$\textit{}[i]} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{product}$\leftarrow$ \textit{findproduct} (\textit{C}$\uparrow$\textit{}, \textit{capName} (\textit{row}, \textit{col}, \textit{year} + \textit{i}))}; }\\
+\parbox{14cm}{\textsf{\textit{quantity}$\leftarrow$ (1 - \textit{deps.m}$\uparrow$\textit{}[row])$^{i - 1}$}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{t}$\leftarrow$ \textit{defineTechnique} (\textit{C}$\uparrow$\textit{}, \textit{src}$\uparrow$\textit{}, \textit{dest}$\uparrow$\textit{})}; }\\
+\parbox{14cm}{\textsf{//   \textbf{dispose} \textit{(} \textit{dest} );}}\\
+\parbox{14cm}{\textsf{\textbf{dispose} \textit{(} \textit{src} );}}\\
+\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{flowsOriginatingIn}\label{sec:harmonyplanflowsOriginatingIn}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{flowsOriginatingIn} \textit{(} \textit{year} :\textit{integer} );}}\\
+\end{tabbing}
+This generates all investment flows generated in 'year' .
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{r}, \textit{c} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{r}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{maxprod}} \textbf{ do } }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{c}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{maxprod}} \textbf{ do } }}\\
+\-\-\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{caps.m}$\uparrow$\textit{}[r]} \textbf{ then } \textsf{\textit{flowsourcedfromTo} (\textit{year}, \textit{r}, \textit{c})}; }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{printResults}\label{sec:harmonyplanprintResults}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{printResults} \textit{(} \textbf{var}  \textit{c} :\textit{TechnologyComplex} ; \textbf{var}  \textit{intensity} ,  \textit{initialResource} :\textit{vector} ) ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{netoutput}, \textit{gross}, \textit{usage}, \textit{produced} $\in$ pvec;}}\\
+\parbox{14cm}{\textsf{Let \textit{toth} $\in$ real;}}\\
+\parbox{14cm}{\textsf{Let \textit{year} $\in$ integer;}}\\
+\<\textsf{\textbf{procedure}  \textit{writecsvln} \textit{(} \textbf{var}  \textit{s} :\textit{headervec} ) ;} (see Section \ref{sec:harmonyplan/printResultswritecsvln} )\\
+\<\textsf{\textbf{procedure}  \textit{writecsvvec} \textit{(} \textbf{var}  \textit{s} :\textit{vector} ) ;} (see Section \ref{sec:harmonyplan/printResultswritecsvvec} )\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{row}, \textit{col}, \textit{index} $\in$ integer;}}\\
+\parbox{14cm}{\textsf{Let \textit{howmuch}, \textit{h} $\in$ real;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{netoutput}$\leftarrow$ \textit{computeNetOutput} (\textit{C}, \textit{intensity}, \textit{initialResource})}; }\\
+\parbox{14cm}{\textsf{\textit{gross}$\leftarrow$ \textit{computeGrossAvail} (\textit{C}, \textit{intensity}, \textit{initialResource})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln} \textit{(} \textrm{\textup { `iter,	useweight,	phase2,	temp' } });}}\\
+\parbox{14cm}{\textsf{\textbf{writeln} \textit{(} \textrm{\textup { ` ' } },\textit{iters} ,\textrm{\textup { `,' } },\textit{useweight} ,\textrm{\textup { `,' } },\textit{phase2adjust} ,\textrm{\textup { `,' } }, \textit{startingtemp} );}}\\
+\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textrm{\textup { `year,headings' } });}}\\
+\parbox{14cm}{\textsf{\textit{writecsvln} (\textit{flows.c}$\uparrow$\textit{})}; }\\
+\parbox{14cm}{\textsf{\textit{toth}$\leftarrow$ 0}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{year}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{years}} \textbf{ do } }}\\
+\-\+\parbox{14cm}{\textsf{\textbf{begin}   \textbf{new} \textit{(} \textit{usage} ,\textit{maxprod} );}}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{produced}  ,\textit{maxprod} +1);}}\\
+\\
+\parbox{14cm}{\textsf{\textbf{writeln} \textit{(} \textit{year} ,\textrm{\textup { `,flow matrix' } });}}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{row}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{outputrowinheaders}} \textbf{ do } }}\\
+\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{write}(\textit{year})}; }\\
+\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textrm{\textup { `,' } },\textit{flows} .\textit{r} \textit{\^{}} [\textit{row} ].\textit{textual} \textit{\^{}} );}}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{col}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{flows.c}$\uparrow$.\textit{max}} \textbf{ do } }}\\
+\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{index}$\leftarrow$ \textbf{round}(\textit{yearXproductIntensityIndex}$\uparrow$\textit{}[year])}; }\\
+\parbox{14cm}{\textsf{\textit{howmuch}$\leftarrow$ \textit{intensities}$\uparrow$\textit{}[index] $\times$ \textit{flows.m}$\uparrow$\textit{}[row]}; }\\
+\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textrm{\textup { `,' } },\textit{howmuch} );}}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{(\textit{row} $<$ \textit{maxprod})} \textbf{ then } }}\\
+\-\+\parbox{14cm}{\textsf{\textbf{begin}  \textit{usage}  \textit{\^{}} [\textit{row} ]:= \textit{usage}  \textit{\^{}} [\textit{row} ]+\textit{howmuch}  ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\+\parbox{14cm}{\textsf{\textbf{else} }}\\
+\-\+\parbox{14cm}{\textsf{\textbf{begin}  \textit{produced}  \textit{\^{}} [\textit{col} ]:=\textit{howmuch} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `' } }})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textit{year} ,\textrm{\textup { `,' } });}}\\
+\parbox{14cm}{\textsf{\textbf{write}(\textit{\textrm{\textup { `productive consumption' } }})}; }\\
+\parbox{14cm}{\textsf{\textit{writecsvvec} (\textit{usage}$\uparrow$\textit{})}; }\\
+\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textit{year} ,\textrm{\textup { `,' } });}}\\
+\parbox{14cm}{\textsf{\textbf{write}(\textit{\textrm{\textup { `accumulation ' } }})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{col}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{usage}$\uparrow$.\textit{cols}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{write}  \textit{(} \textrm{\textup { `,' } },\textit{(} \textit{produced} \textit{\^{}} [\textit{col} ]-\textit{netoutput} \textit{\^{}} [\textit{flownum} \textit{(} \textit{col} ,\textit{year} )]-\textit{usage} \textit{\^{}} [\textit{col} ]));}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textit{year} ,\textrm{\textup { `,' } });}}\\
+\parbox{14cm}{\textsf{\textbf{write}(\textit{\textrm{\textup { `netoutput ' } }})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{col}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{flows.c}$\uparrow$.\textit{max}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{write}  \textit{(} \textrm{\textup { `,' } },\textit{netoutput} \textit{\^{}} [\textit{flownum} \textit{(} \textit{col} ,\textit{year} )]);}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textit{year} ,\textrm{\textup { `,' } });}}\\
+\parbox{14cm}{\textsf{\textbf{write}(\textit{\textrm{\textup { `target  ' } }})}; }\\
+\+\<\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{col}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{flows.c}$\uparrow$.\textit{max}} \textbf{ do } \textsf{\textit{begin}} \textbf{ begin } }}\\
+\parbox{14cm}{\textsf{\textbf{write}  \textit{(} \textrm{\textup { `,' } },\textit{targs} .\textit{m} \textit{\^{}} [\textit{year} ][\textit{col} ]);}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textit{year} ,\textrm{\textup { `,' } });}}\\
+\parbox{14cm}{\textsf{\textbf{write}(\textit{\textrm{\textup { `netoutput/target  ' } }})}; }\\
+\+\<\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{col}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{flows.c}$\uparrow$.\textit{max}} \textbf{ do } \textsf{\textit{begin}} \textbf{ begin } }}\\
+\parbox{14cm}{\textsf{\textbf{write}  \textit{(} \textrm{\textup { `,' } },\textit{(} \textit{netoutput} \textit{\^{}} [\textit{flownum} \textit{(} \textit{col} ,\textit{year} )]/\textit{targs} .\textit{m} \textit{\^{}} [\textit{year} ][\textit{col} ]));}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `' } }})}; }\\
+\\
+\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textrm{\textup { `' } },\textit{year} ,\textrm{\textup { `,' } });}}\\
+\parbox{14cm}{\textsf{\textbf{write}(\textit{\textrm{\textup { `harmony  ' } }})}; }\\
+\\
+\+\<\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{col}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{flows.c}$\uparrow$.\textit{max}} \textbf{ do } \textsf{\textit{begin}} \textbf{ begin } }}\\
+\parbox{14cm}{\textsf{\textit{h}$\leftarrow$ \textit{Harmony.H} (\textit{targs.m}$\uparrow$\textit{}[year], \textit{netoutput}$\uparrow$\textit{}[flownum (col, year)])}; }\\
+\parbox{14cm}{\textsf{\textbf{write}  \textit{(} \textrm{\textup { `,' } },\textit{h} );}}\\
+\parbox{14cm}{\textsf{\textit{toth}$\leftarrow$ \textit{h} + \textit{toth}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `' } }})}; }\\
+\parbox{14cm}{\textsf{\textbf{writeln} \textit{(} \textrm{\textup { `' } },\textit{year} ,\textrm{\textup { `,capital use matrix' } });}}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{row}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{labourrow} - 1} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{write}(\textit{\textrm{\textup { `' } }}, \textit{year})}; }\\
+\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textrm{\textup { `,' } },\textit{flows} .\textit{r} \textit{\^{}} [\textit{row} ].\textit{textual} \textit{\^{}} );}}\\
+\+\<\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{col}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{flows.c}$\uparrow$.\textit{max}} \textbf{ do } \textsf{\textit{begin}} \textbf{ begin } }}\\
+\parbox{14cm}{\textsf{\textit{index}$\leftarrow$ \textbf{round}(\textit{yearXproductIntensityIndex}$\uparrow$\textit{}[year])}; }\\
+\parbox{14cm}{\textsf{\textit{howmuch}$\leftarrow$ \textit{intensities}$\uparrow$\textit{}[index]}; }\\
+\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textrm{\textup { `,' } },\textit{howmuch} *\textit{caps} .\textit{m} \textit{\^{}} [\textit{row} ][\textit{col} ]);}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `' } }})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{\textrm{\textup { `' } }})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textbf{writeln} \textit{(} \textrm{\textup { `totalharmony ,' } },\textit{toth} );}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{setupintertermporalflow}\label{sec:harmonyplansetupintertermporalflow}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{setupintertermporalflow} ;}}\\
+\end{tabbing}
+the aim of this procedure is to create techniques which represent
+investment flows, in general these will be joint production techniques.
+We will have one technique for each type of non zero capital good, for each year
+other than the last one.
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{y} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{y}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{years}} \textbf{ do } \textsf{\textit{flowsOriginatingIn} (\textit{y})}; }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{writecsvln}\label{sec:harmonyplan/printResultswritecsvln}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{writecsvln} \textit{(} \textbf{var}  \textit{s} :\textit{headervec} ) ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{i} $\in$ integer;}}\\
+\parbox{14cm}{\textsf{Let \textit{c} $\in$ csvcell;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{s.max}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{c}$\leftarrow$ \textit{s}$_{\textit{i}}$$\uparrow$\textit{}}; }\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{\textit{c}} \textbf{ do } }}\\
+\-\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textrm{\textup { `,' } },\textit{textual} \textit{\^{}} );}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{writeln}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{writecsvvec}\label{sec:harmonyplan/printResultswritecsvvec}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{writecsvvec} \textit{(} \textbf{var}  \textit{s} :\textit{vector} ) ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{Let \textit{i} $\in$ integer;}}\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ 1} \textbf{ to } \textsf{\textit{s.cols}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textrm{\textup { `,' } },\textit{s} [\textit{i} ]);}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{writeln}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\end{tabbing}
+\section{threadlib}
+\input{threadlib}
+
+\section{technologies}
+\input{technologies}
+
+\section{harmony}
+\input{harmony}
+
+\section{csvfilereader}
+\input{csvfilereader}
+
+\end{document}

@@ -1,0 +1,997 @@
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{unit}  \textit{csvfilereader} ;}}\\
+\end{tabbing}
+This parses csv files meeting the official UK standard for such files The following text is imported from that
+definition at https://www.ofgem.gov.uk/sites/default/files/docs/2013/01/csvfileformatspecification.pdf
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\end{tabbing}
+\section{Introduction}
+\subsection{Background}
+The  comma
+separated  values  (CSV)  format  is  a  widely  used  text  file  format  often  used  to  exchange
+data  between  applications.  It  contains  multiple  records  (one  per  line),  and  each  field  is  delimited  by  a
+comma.
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\end{tabbing}
+\subsection{CSV File Format}
+The primary function
+of CSV file
+is to
+separate each field values by comma separated and
+transport
+text
+-
+based data
+to one or more target application. A source application is one which creates or appends
+to a CSV file
+and a
+target application is one which reads a CSV file
+\subsubsection{CSV File Structure}
+The
+CSV file structure use following
+two
+notations
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\end{tabbing}
+FS (Field
+Separator) i.e. comma separated
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\end{tabbing}
+FD (Field Delimiter) i.e.  Always use a double
+-
+quote.
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\end{tabbing}
+Each line feed in CSV file represents one record and each line is terminated by any valid
+NL (New line
+i.e. Carriage Return (CR)
+ASCII (13)
+and Line Feed (LF)
+ASCII (10)
+) feed.
+Each
+record
+contains
+one or more
+fields and the fields are separated by the
+FS character (i.e. Comma)
+A field
+is a string of text characters
+which will be delimited
+by the FD character (i.e. double
+-
+quote (''))
+Any field may be quoted (with double quotes).
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\\
+\end{tabbing}
+Fields containing a line
+-
+break, double
+-
+quote, and/or commas should be quoted. (If they are not, the file
+will likely be impossible to process correctly).
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\\
+\end{tabbing}
+The FS ch
+aracter (i.e. comma) may appear in a FD delimited field and in this case it is not treated as
+the field separator.
+If a field's
+value
+contains one or more commas, double
+-
+quotes, CR or LF characters, then it MUST be
+delimited by a pair of double
+-
+quotes (AS
+CII 0x22).
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\\
+\end{tabbing}
+DO NOT apply double
+-
+quote protection where it is not required as applying double quotes on every field
+or on empty field
+would
+takes more file space
+If a field requires Excel protection, its
+value
+MUST be prefixed with a single tilde character
+.
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\end{tabbing}
+See example below:
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\end{tabbing}
+FS =,
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\end{tabbing}
+FD ="
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\end{tabbing}
+Data Record:{\tt
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\end{tabbing}
+Test1,Test2,,"Test3,Test4","Test5 ""Test6"" Test7","Test8,""",",Test9"}
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\\
+\end{tabbing}
+Indicat
+es the following four fields
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\\
+\end{tabbing}
+\begin{tabular}{ll}
+{\tt Test1}&
+5
+characters\\
+{\tt Test2}&
+5
+characters\\
+&
+0 characters
+\\
+{\tt Test3,Test4}  &
+11 characters
+\\
+{\tt Test5 "Test6" Test7}
+&20  characters
+\\
+{\tt
+Test8,"}
+&8 characters
+\\
+{\tt ,Test9}
+&6 characters
+\end{tabular}
+\section{
+CSV File Rules}\begin{itemize}\item
+The file type extension MUST be set to .CSV
+\item
+The character set used by data contained in the file MUST be an 8
+-
+bit (UTF
+-
+8).
+\item
+No binary data should be transported in CSV file.
+\item
+A CSV file MUST contain at least one record.
+\item
+No limit to the number of data records
+\item
+The End of Record m
+ust be set to
+CR
++LF
+(i.e. Carriage Return
+and Line Feed
+)
+\item
+Do not use whitespaces in the file name
+\item
+The EOR marker MUST NOT be taken as being part of the CSV record
+\item
+EOF  (End  of  File)
+character  indicates  a  logical  EOF  (SUB
+-
+ASCII  0x1A)  and  not  the  physical
+en
+d
+.
+\item
+A logical EOF marker cannot be double
+-
+quote protected.
+\item
+Any record appears after the EOF will be ignored
+\end{itemize}
+\subsection{
+File Size}
+Maximum csv file size
+should be 30 MB.
+\subsection{CSV Records}
+A CSV record consists of two elements, a
+data record
+followed by an end
+-
+of
+-
+record marker (EOR). The
+EOR is a
+data record
+delivery marker and does not form part of the data delivered by the record
+\section{
+CSV Record Rules}
+Pls. note this rule applies to every CSV record including the last record in the file.
+\subsection{
+CSV Field Column Rules}\begin{itemize}
+\item
+Each  recor
+d  within  the  same  CSV  file  MUST  contain  the  same  number  of  field  columns
+.  The
+header record describes how many fields the application should expect to process.
+\item
+Field columns MUST be separated from each other by a single separation character
+\item
+A field column
+MUST NOT have leading or trailing whitespace\end{itemize}
+\subsection{Header Record Rules}
+A header record allows the Ofgem IT systems to guard against the potential issues such as missing
+column or additional column that are not in scope\begin{itemize}
+\item
+The header record MUST be the first recor
+d in the file.
+\item
+A CSV file MUST contain one header record
+only
+.
+\item
+Header labels MUST NOT be blank.
+\item
+Use single word only\item
+Do not use spaces (Use \_ if words needs to be separated)
+\end{itemize}
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\+\parbox{14cm}{\textsf{\textbf{interface} }}\\
+\+\parbox{14cm}{\textsf{\textbf{const} }}\\
+\parbox{14cm}{\textsf{\textit{textlen} =80;}}\\
+\<\parbox{14cm}{\textsf{\textbf{type} }}\\
+\parbox{14cm}{\textsf{\textit{pcsv} =\textit{\^{}} \textit{csvcell} ;}}\\
+\parbox{14cm}{\textsf{\textit{celltype} =\textit{(} \textit{linestart} ,\textit{numeric} ,\textit{alpha} );}}\\
+\parbox{14cm}{\textsf{\textit{textfield} =\textit{textline} ;}}\\
+\+\parbox{14cm}{\textsf{\textit{csvcell}  = \textbf{record} }}\\
+\parbox{14cm}{\textsf{\textit{right} : \textit{pcsv}}; }\\
+\+\parbox{14cm}{\textsf {\textbf {case } \textsf{\textit{tag} : \textit{celltype}} \textbf{ of } }}\\
+\parbox{14cm}{\textsf{\textit{linestart} : (\textit{down} : \textit{pcsv})}; }\\
+\parbox{14cm}{\textsf{\textit{numeric} : (\textit{number} : \textit{real})}; }\\
+\parbox{14cm}{\textsf{\textit{$\alpha$} : (\textit{textual} : \textit{pstring})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\parbox{14cm}{\textsf{\textit{headervec} \textit{(} \textbf{max} :\textit{integer} ) =\textbf{array}  [1..\textbf{max} ]\textbf{of}  \textit{pcsv} ;}}\\
+\parbox{14cm}{\textsf{\textit{pheadervec} $=$ $\uparrow$ \textit{headervec} }; }\\
+\<\textsf{\textbf{procedure}  \textit{printcsv} \textit{(} \textbf{var}  \textit{f} :\textit{text} ;\textit{p} :\textit{pcsv} );} (see Section \ref{sec:csvfilereaderprintcsv} )\\
+\<\textsf{\textbf{function}  \textit{parsecsvfile} \textit{(} \textbf{name} :\textit{textline} ):\textit{pcsv} ;} (see Section \ref{sec:csvfilereaderparsecsvfile} )\\
+\<\textsf{\textbf{function}  \textit{rowcount} \textit{(} \textit{p} :\textit{pcsv} ):\textit{integer} ;} (see Section \ref{sec:csvfilereaderrowcount} )\\
+\<\textsf{\textbf{function}  \textit{getdatamatrix} \textit{(} \textit{p} :\textit{pcsv} ):\textit{\^{}} \textit{matrix} ;} (see Section \ref{sec:csvfilereadergetdatamatrix} )\\
+\<\textsf{\textbf{function}  \textit{getcell} \textit{(} \textit{p} :\textit{pcsv} ;\textit{row} ,\textit{col} :\textit{integer} ):\textit{pcsv} ;} (see Section \ref{sec:csvfilereadergetcell} )\\
+\<\textsf{\textbf{function}  \textit{getrowheaders} \textit{(} \textit{p} :\textit{pcsv} ):\textit{\^{}} \textit{headervec} ;} (see Section \ref{sec:csvfilereadergetrowheaders} )\\
+\<\textsf{\textbf{function}  \textit{getcolheaders} \textit{(} \textit{p} :\textit{pcsv} ):\textit{\^{}} \textit{headervec} ;} (see Section \ref{sec:csvfilereadergetcolheaders} )\\
+\<\textsf{\textbf{function}  \textit{colcount} \textit{(} \textit{p} :\textit{pcsv} ):\textit{integer} ;} (see Section \ref{sec:csvfilereadercolcount} )\\
+\end{tabbing}
+returns nil for file that can not be opened, otherwise
+returns pointer to tree of csvcells.
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \+ \+ \\
+\<\parbox{14cm}{\textsf{\textbf{implementation} }}\\
+\\
+\<\<\<\parbox{3.5cm}{\scriptsize{field delimitor}}\'\>\>\parbox{14cm}{\textsf{\textbf{const} }}\\
+\parbox{14cm}{\textsf{\textit{FD} $=$ 34}; }\\
+\<\<\<\parbox{3.5cm}{\scriptsize{field separator}}\'\>\>\>\parbox{14cm}{\textsf{\textit{FS} $=$ 44}; }\\
+\<\<\<\parbox{3.5cm}{\scriptsize{record separator}}\'\>\>\>\parbox{14cm}{\textsf{\textit{RS} $=$ 10}; }\\
+\parbox{14cm}{\textsf{\textit{EOI} $=$ \$1a}; }\\
+\parbox{14cm}{\textsf{\textit{CR} $=$ 13}; }\\
+\<\parbox{14cm}{\textsf{\textbf{type} }}\\
+\parbox{14cm}{\textsf{\textit{token} $=$ (\textit{FDsym})}; }\\
+\parbox{14cm}{\textsf{\textit{tokenset} $=$ \textbf{set} \textbf{of} \textit{token}  }; }\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{categorisor: \textbf{ array } \textsf{\textit{}[byte]} \textbf{ of } \textsf{\textit{token}}; }\\
+\\
+\<\textsf{\textbf{function}  \textit{getdatamatrix} \textit{(} \textit{p} :\textit{pcsv} ):\textit{\^{}} \textit{matrix} ;} (see Section \ref{sec:csvfilereadergetdatamatrix} )\\
+\end{tabbing}
+\section{getdatamatrix}\label{sec:csvfilereadergetdatamatrix}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{getdatamatrix} \textit{(} \textit{p} :\textit{pcsv} ):\textit{\^{}} \textit{matrix} ;}}\\
+\end{tabbing}
+extract the column headers as a vector of strings
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{\textit{m} : $\uparrow$ \textit{matrix} }; }\\
+\<\textsf{\textbf{procedure}  \textit{recursedown} \textit{(} \textit{j} :\textit{integer} ;\textit{q} :\textit{pcsv} );} (see Section \ref{sec:csvfilereader/getdatamatrixrecursedown} )\\
+\end{tabbing}
+\section{recursedown}\label{sec:csvfilereader/getdatamatrixrecursedown}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{recursedown} \textit{(} \textit{j} :\textit{integer} ;\textit{q} :\textit{pcsv} );}}\\
+\+\textsf{\textbf{procedure}  \textit{recurse} \textit{(} \textit{i} :\textit{integer} ;\textit{q} :\textit{pcsv} );} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedownrecurse} )\\
+\end{tabbing}
+\section{recurse}\label{sec:csvfilereader/getdatamatrix/recursedownrecurse}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{recurse} \textit{(} \textit{i} :\textit{integer} ;\textit{q} :\textit{pcsv} );}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{q} $\neq$ \textit{nil}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{i} $\geq$ 1} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{q}$\uparrow$.\textit{tag} $=$ \textit{numeric}} \textbf{ then } }}\\
+\parbox{14cm}{\textsf{\textit{m}$\uparrow$\textit{}[j, i]$\leftarrow$ \textit{q}$\uparrow$.\textit{number}}}\\
+\<\parbox{14cm}{\textsf {\textbf {else } \textsf{\textit{m}$\uparrow$\textit{}[j, i]$\leftarrow$ 0.0}}}\\
+\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{recurse} (\textit{i} + 1, \textit{q}$\uparrow$.\textit{right})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\parbox{14cm}{\textsf{;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{q} $\neq$ \textit{nil}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{recurse} (0, \textit{q}$\uparrow$.\textit{right})}; }\\
+\parbox{14cm}{\textsf{\textit{recursedown} (\textit{j} + 1, \textit{q}$\uparrow$.\textit{down})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{p} $=$ \textit{nil}} \textbf{ then } \textsf{\textit{getdatamatrix}$\leftarrow$ \textit{nil}}}}\\
+\<\parbox{14cm}{\textsf{\textbf{else} }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{m} ,\textit{rowcount} \textit{(} \textit{p} )-1,\textit{colcount} \textit{(} \textit{p} )-1);}}\\
+\parbox{14cm}{\textsf{\textit{recursedown} (1, \textit{p}$\uparrow$.\textit{down})}; }\\
+\parbox{14cm}{\textsf{\textit{getdatamatrix}$\leftarrow$ \textit{m}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{function}  \textit{getcolheaders} \textit{(} \textit{p} :\textit{pcsv} ):\textit{\^{}} \textit{headervec} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recursegetcolheaders} )\\
+\end{tabbing}
+\section{getcolheaders}\label{sec:csvfilereader/getdatamatrix/recursedown/recursegetcolheaders}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{getcolheaders} \textit{(} \textit{p} :\textit{pcsv} ):\textit{\^{}} \textit{headervec} ;}}\\
+\end{tabbing}
+extract the column headers
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{\textit{M}}; }\\
+\parbox{14cm}{\textsf{\textit{h} : $\uparrow$ \textit{headervec} }; }\\
+\<\textsf{\textbf{procedure}  \textit{recurse} \textit{(} \textit{i} :\textit{integer} ;\textit{q} :\textit{pcsv} );} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheadersrecurse} )\\
+\end{tabbing}
+\section{recurse}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheadersrecurse}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{recurse} \textit{(} \textit{i} :\textit{integer} ;\textit{q} :\textit{pcsv} );}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{q} $\neq$ \textit{nil}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\\
+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{i} $\geq$ 1} \textbf{ then } \textsf{\textit{h}$\uparrow$\textit{}[i]$\leftarrow$ \textit{q}}; }}\\
+\parbox{14cm}{\textsf{\textit{recurse} (\textit{i} + 1, \textit{q}$\uparrow$.\textit{right})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{p} $=$ \textit{nil}} \textbf{ then } \textsf{\textit{getcolheaders}$\leftarrow$ \textit{nil}}}}\\
+\<\parbox{14cm}{\textsf{\textbf{else} }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{h} ,\textit{colcount} \textit{(} \textit{p} )-1);}}\\
+\parbox{14cm}{\textsf{\textit{recurse} (0, \textit{p}$\uparrow$.\textit{right})}; }\\
+\parbox{14cm}{\textsf{\textit{getcolheaders}$\leftarrow$ \textit{h}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{function}  \textit{getrowheaders} \textit{(} \textit{p} :\textit{pcsv} ):\textit{\^{}} \textit{headervec} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recursegetrowheaders} )\\
+\end{tabbing}
+\section{getrowheaders}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recursegetrowheaders}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{getrowheaders} \textit{(} \textit{p} :\textit{pcsv} ):\textit{\^{}} \textit{headervec} ;}}\\
+\end{tabbing}
+extract the rows headers
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{\textit{M}}; }\\
+\parbox{14cm}{\textsf{\textit{h} : $\uparrow$ \textit{headervec} }; }\\
+\<\textsf{\textbf{procedure}  \textit{recurse} \textit{(} \textit{i} :\textit{integer} ;\textit{q} :\textit{pcsv} );} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheadersrecurse} )\\
+\end{tabbing}
+\section{recurse}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheadersrecurse}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{recurse} \textit{(} \textit{i} :\textit{integer} ;\textit{q} :\textit{pcsv} );}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{q} $\neq$ \textit{nil}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{h}$\uparrow$\textit{}[i]$\leftarrow$ \textit{q}$\uparrow$.\textit{right}}; }\\
+\parbox{14cm}{\textsf{\textit{recurse} (\textit{i} + 1, \textit{q}$\uparrow$.\textit{down})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{p} $=$ \textit{nil}} \textbf{ then } \textsf{\textit{getrowheaders}$\leftarrow$ \textit{nil}}}}\\
+\<\parbox{14cm}{\textsf{\textbf{else} }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{h} ,\textit{rowcount} \textit{(} \textit{p} )-1);}}\\
+\parbox{14cm}{\textsf{\textit{recurse} (1, \textit{p}$\uparrow$.\textit{down})}; }\\
+\parbox{14cm}{\textsf{\textit{getrowheaders}$\leftarrow$ \textit{h}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{function}  \textit{colcount} \textit{(} \textit{p} :\textit{pcsv} ):\textit{integer} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recursecolcount} )\\
+\end{tabbing}
+\section{colcount}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recursecolcount}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{colcount} \textit{(} \textit{p} :\textit{pcsv} ):\textit{integer} ;}}\\
+\end{tabbing}
+return the number of columns in the spreadsheet
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{p} $=$ \textit{nil}} \textbf{ then } \textsf{\textit{colcount}$\leftarrow$ 0}}}\\
+\<\parbox{14cm}{\textsf{\textbf{else} }}\\
+\+\parbox{14cm}{\textsf {\textbf {case } \textsf{\textit{p}$\uparrow$.\textit{tag}} \textbf{ of } }}\\
+\parbox{14cm}{\textsf{\textit{linestart} : \textit{colcount}$\leftarrow$ \textit{colcount} (\textit{p}$\uparrow$.\textit{right})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{function}  \textit{getcell} \textit{(} \textit{p} :\textit{pcsv} ;\textit{row} ,\textit{col} :\textit{integer} ):\textit{pcsv} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcountgetcell} )\\
+\end{tabbing}
+\section{getcell}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcountgetcell}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{getcell} \textit{(} \textit{p} :\textit{pcsv} ;\textit{row} ,\textit{col} :\textit{integer} ):\textit{pcsv} ;}}\\
+\end{tabbing}
+return the cell at position row,col in the spredsheet
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{p} $=$ \textit{nil}} \textbf{ then } \textsf{\textit{getcell}$\leftarrow$ \textit{nil}}}}\\
+\<\-\+\parbox{14cm}{\textsf {\textbf {else }  \textbf{ if } \textsf{\textit{row} $=$ 1} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {else }  \textbf{ if } \textsf{\textit{col} $=$ 1} \textbf{ then } \textsf{\textit{getcell}$\leftarrow$ \textit{p}}}}\\
+\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\+\textsf{\textbf{procedure}  \textit{removetrailingnull} \textit{(}  \textbf{var}  \textit{p} :\textit{pcsv} );} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcellremovetrailingnull} )\\
+\end{tabbing}
+\section{removetrailingnull}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcellremovetrailingnull}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{removetrailingnull} \textit{(}  \textbf{var}  \textit{p} :\textit{pcsv} );}}\\
+\+\textsf{\textbf{function}  \textit{onlynulls} \textit{(} \textit{q} :\textit{pcsv} ):\textit{boolean} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnullonlynulls} )\\
+\end{tabbing}
+\section{onlynulls}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnullonlynulls}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{onlynulls} \textit{(} \textit{q} :\textit{pcsv} ):\textit{boolean} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{q} $=$ \textit{nil}} \textbf{ then } \textsf{\textit{onlynulls}$\leftarrow$ \textit{false}} \textbf{ false } }}\\
+\<\parbox{14cm}{\textsf{\textbf{else} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{q}$\uparrow$.\textit{tag} $=$ \textit{$\alpha$}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\+\parbox{14cm}{\textsf {\textbf {else } \textsf{\textit{onlynulls}$\leftarrow$ \textit{false}} \textbf{ false } }}\\
+\<\-\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{p} $\neq$ \textit{nil}} \textbf{ then } }}\\
+\+\parbox{14cm}{\textsf {\textbf {case } \textsf{\textit{p}$\uparrow$.\textit{tag}} \textbf{ of } }}\\
+\parbox{14cm}{\textsf{\textit{linestart} : \textit{}}}\\
+\+\parbox{14cm}{\textsf{\textbf{or} \textit{(} \textit{(} \textit{p} \textit{\^{}} .\textit{down} =\textit{nil} )\textbf{and}  \textit{onlynulls} \textit{(} \textit{p} \textit{\^{}} .\textit{right} )) \textbf{then}  \textit{p} :=\textit{nil} }}\\
+\-\<\parbox{14cm}{\textsf {\textbf {else } \textsf{\textit{removetrailingnull} (\textit{p}$\uparrow$.\textit{down})}; }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{function}  \textit{rowcount} \textit{(} \textit{p} :\textit{pcsv} ):\textit{integer} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynullsrowcount} )\\
+\end{tabbing}
+\section{rowcount}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynullsrowcount}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{rowcount} \textit{(} \textit{p} :\textit{pcsv} ):\textit{integer} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{p} $=$ \textit{nil}} \textbf{ then } \textsf{\textit{rowcount}$\leftarrow$ 0}}}\\
+\<\parbox{14cm}{\textsf{\textbf{else} }}\\
+\+\parbox{14cm}{\textsf {\textbf {case } \textsf{\textit{p}$\uparrow$.\textit{tag}} \textbf{ of } }}\\
+\parbox{14cm}{\textsf{\textit{linestart} : \textit{rowcount}$\leftarrow$ 1 + \textit{rowcount} (\textit{p}$\uparrow$.\textit{down})}; }\\
+\parbox{14cm}{\textsf{\textit{numeric}$\leftarrow$ 1}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{function}  \textit{isint} \textit{(} \textit{r} :\textit{real} ):\textit{boolean} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcountisint} )\\
+\end{tabbing}
+\section{isint}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcountisint}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{isint} \textit{(} \textit{r} :\textit{real} ):\textit{boolean} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{\textit{i} : \textit{integer}}; }\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{i}$\leftarrow$ \textbf{round}(\textit{r})}; }\\
+\parbox{14cm}{\textsf{\textit{isint}$\leftarrow$ (\textit{i} $\times$ 1.0) $=$ \textit{r}}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{procedure}  \textit{printcsv} \textit{(} \textbf{var}  \textit{f} :\textit{text} ;\textit{p} :\textit{pcsv} );} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isintprintcsv} )\\
+\end{tabbing}
+\section{printcsv}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isintprintcsv}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{printcsv} \textit{(} \textbf{var}  \textit{f} :\textit{text} ;\textit{p} :\textit{pcsv} );}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{p} $\neq$ \textit{nil}} \textbf{ then } }}\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{\textit{p}$\uparrow$\textit{}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{tag} $=$ \textit{linestart}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{printcsv} (\textit{f}, \textit{right})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{down} $\neq$ \textit{nil}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{writeln}(\textit{f})}; }\\
+\parbox{14cm}{\textsf{\textit{printcsv} (\textit{f}, \textit{down})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\+\parbox{14cm}{\textsf{\textbf{else} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{tag} $=$ \textit{numeric}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf {\textbf {else } \textsf{\textbf{write}(\textit{f}, \textit{number} : 1 : 6)}; }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{right} $\neq$ \textit{nil}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textit{f} ,\textrm{\textup { `,' } });}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\+\parbox{14cm}{\textsf{\textbf{else} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{tag} $=$ \textit{$\alpha$}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\\
+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{textual} $\neq$ \textit{nil}} \textbf{ then } \textsf{\textbf{write}(\textit{f}, \textit{\textrm{\textup { `"' } }}, \textit{textual}$\uparrow$\textit{}, \textit{\textrm{\textup { `"' } }})} \textbf{ else } \textsf{\textbf{write}(\textit{f}, \textit{\textrm{\textup { `nil' } }})}; }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{right} $\neq$ \textit{nil}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\\
+\parbox{14cm}{\textsf{\textbf{write} \textit{(} \textit{f} ,\textrm{\textup { `,' } });}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\<\-\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{function}  \textit{parsecsvfile} \textit{(} \textbf{name} :\textit{textfield} ):\textit{pcsv} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsvparsecsvfile} )\\
+\end{tabbing}
+\section{parsecsvfile}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsvparsecsvfile}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{parsecsvfile} \textit{(} \textbf{name} :\textit{textfield} ):\textit{pcsv} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{const} }}\\
+\parbox{14cm}{\textsf{\textit{megabyte} $=$ 1024 $\times$ 1024}; }\\
+\parbox{14cm}{\textsf{\textit{maxbuf} $=$ 30 $\times$ \textit{megabyte}}; }\\
+\<\parbox{14cm}{\textsf{\textbf{type} }}\\
+\parbox{14cm}{\textsf{\textit{bytebuf}  = \textbf{array} [1..\textit{maxbuf} ] \textbf{of}  \textit{byte} ;}}\\
+\<\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{\textit{f} : \textit{fileptr}}; }\\
+\parbox{14cm}{\textsf{\textit{bp} : $\uparrow$ \textit{bytebuf} }; }\\
+\parbox{14cm}{\textsf{\textit{fs}}; }\\
+\parbox{14cm}{\textsf{\textit{tokstart}}; }\\
+\parbox{14cm}{\textsf{\textit{firstfield}}; }\\
+\<\textsf{\textbf{function}  \textit{thetoken} :\textit{token} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfilethetoken} )\\
+\end{tabbing}
+\section{thetoken}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfilethetoken}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{thetoken} :\textit{token} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{currentchar} $\leq$ \textit{fs}} \textbf{ then } }}\\
+\parbox{14cm}{\textsf{\textit{thetoken}$\leftarrow$ \textit{categorisor}$_{\textit{bp}\uparrow\textit{}[\textit{currentchar}]}$}}\\
+\<\parbox{14cm}{\textsf {\textbf {else } \textsf{\textit{thetoken}$\leftarrow$ \textit{EOFsym}}}}\\
+\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{function}  \textit{peek} \textit{(} \textit{c} :\textit{token} ):\textit{boolean} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetokenpeek} )\\
+\end{tabbing}
+\section{peek}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetokenpeek}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{peek} \textit{(} \textit{c} :\textit{token} ):\textit{boolean} ;}}\\
+\end{tabbing}
+matches current char against the token c returns true if it matches.
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{peek}$\leftarrow$ \textit{c} $=$ \textit{thetoken}}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{function}  \textit{isoneof}  \textit{(} \textit{s} :\textit{tokenset} ):\textit{boolean} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peekisoneof} )\\
+\end{tabbing}
+\section{isoneof}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peekisoneof}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{isoneof}  \textit{(} \textit{s} :\textit{tokenset} ):\textit{boolean} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{isoneof}$\leftarrow$ \textit{thetoken} $\in$ \textit{s}}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{procedure}  \textit{nextsymbol} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneofnextsymbol} )\\
+\end{tabbing}
+\section{nextsymbol}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneofnextsymbol}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{nextsymbol} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{currentchar} $\leq$ \textit{fs}} \textbf{ then } \textsf{\textit{currentchar}$\leftarrow$ \textit{currentchar} + 1}}}\\
+\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{function}  \textit{have} \textit{(} \textit{c} :\textit{token} ):\textit{boolean} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbolhave} )\\
+\end{tabbing}
+\section{have}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbolhave}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{have} \textit{(} \textit{c} :\textit{token} ):\textit{boolean} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{peek} (\textit{c})} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{nextsymbol}}; }\\
+\parbox{14cm}{\textsf{\textit{have}$\leftarrow$ \textit{true}}; }\\
+\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\+\parbox{14cm}{\textsf{\textbf{else} }}\\
+\-\parbox{14cm}{\textsf{\textit{have}$\leftarrow$ \textit{false}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{function}  \textit{haveoneof} \textit{(} \textit{c} :\textit{tokenset} ):\textit{boolean} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/havehaveoneof} )\\
+\end{tabbing}
+\section{haveoneof}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/havehaveoneof}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{function}  \textit{haveoneof} \textit{(} \textit{c} :\textit{tokenset} ):\textit{boolean} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{isoneof} (\textit{c})} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{nextsymbol}}; }\\
+\parbox{14cm}{\textsf{\textit{haveoneof}$\leftarrow$ \textit{true}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} }}\\
+\+\parbox{14cm}{\textsf{\textbf{else} }}\\
+\-\parbox{14cm}{\textsf{\textit{haveoneof}$\leftarrow$ \textit{false}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\+\textsf{\textbf{procedure}  \textit{initialise} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneofinitialise} )\\
+\end{tabbing}
+\section{initialise}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneofinitialise}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{initialise} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{firstfield}$\leftarrow$ \textit{nil}}; }\\
+\parbox{14cm}{\textsf{\textit{lastfield}$\leftarrow$ \textit{nil}}; }\\
+\parbox{14cm}{\textsf{\textit{firstrecord}$\leftarrow$ \textit{nil}}; }\\
+\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{procedure}  \textit{resolvealpha} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialiseresolvealpha} )\\
+\end{tabbing}
+\section{resolvealpha}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialiseresolvealpha}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{resolvealpha} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{\textit{i}}; }\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{\textit{lastfield}$\uparrow$\textit{}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{tag}$\leftarrow$ \textit{$\alpha$}}; }\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{textual} );}}\\
+\parbox{14cm}{\textsf{\textit{textual}$\uparrow$\textit{}$\leftarrow$ \textit{\textrm{\textup { `' } }}}; }\\
+\parbox{14cm}{\textsf{\textit{l}$\leftarrow$ \textit{tokend}  \textbf{min}(\textit{tokstart} + \textit{textlen} - 1) }; }\\
+\parbox{14cm}{\texttt{\small{\{ copy field to string\}}}}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ \textit{tokstart}} \textbf{ to } \textsf{\textit{l} - 1} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{textual}$\uparrow$\textit{}$\leftarrow$ \textit{textual}$\uparrow$ +  \textbf{chr}(\textit{bp}$\uparrow$\textit{}[i]) }; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\+\textsf{\textbf{procedure}  \textit{resolvedigits} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpharesolvedigits} )\\
+\end{tabbing}
+\section{resolvedigits}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpharesolvedigits}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{resolvedigits} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{\textit{i}}; }\\
+\parbox{14cm}{\textsf{\textit{s} : \textit{string}}; }\\
+\-\<\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{\textit{lastfield}$\uparrow$\textit{}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{tag}$\leftarrow$ \textit{numeric}}; }\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{textual} );}}\\
+\parbox{14cm}{\textsf{\textit{s}$\leftarrow$ \textit{\textrm{\textup { `' } }}}; }\\
+\parbox{14cm}{\textsf{\textit{l}$\leftarrow$ \textit{tokend}  \textbf{min}(\textit{tokstart} + \textit{textlen} - 1) }; }\\
+\parbox{14cm}{\texttt{\small{\{ copy field to a string \}}}}\\
+\+\parbox{14cm}{\textsf {\textbf {for } \textsf{\textit{i}$\leftarrow$ \textit{tokstart}} \textbf{ to } \textsf{\textit{l}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{s}$\leftarrow$ \textit{s} + \textbf{chr}(\textit{bp}$\uparrow$\textit{}[i])}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\<\parbox{3.5cm}{\scriptsize{convert to binary}}\'\>\>\parbox{14cm}{\textsf{\textit{val} (\textit{s}, \textit{number}, \textit{l})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{procedure}  \textit{resolvetoken} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigitsresolvetoken} )\\
+\end{tabbing}
+\section{resolvetoken}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigitsresolvetoken}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{resolvetoken} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textbf{chr}(\textit{bp}$\uparrow$\textit{}[tokstart])} \textbf{ in } \textsf{\textit{}[\textrm{\textup { `0' } }..\textrm{\textup { `9' } }]} \textbf{ then } \textsf{\textit{resolvedigits}}}}\\
+\<\parbox{14cm}{\textsf {\textbf {else } \textsf{\textit{resolvealpha}}}}\\
+\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\+\textsf{\textbf{procedure}  \textit{markbegin} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetokenmarkbegin} )\\
+\end{tabbing}
+\section{markbegin}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetokenmarkbegin}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{3.5cm}{\scriptsize{mark start of a field}}\'\parbox{14cm}{\textsf{\textbf{procedure}  \textit{markbegin} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{tokstart}$\leftarrow$ \textit{currentchar}}; }\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{lastfield} \textit{\^{}} .\textit{right} );}}\\
+\parbox{14cm}{\textsf{\textit{lastfield}$\leftarrow$ \textit{lastfield}$\uparrow$.\textit{right}}; }\\
+\parbox{14cm}{\textsf{\textit{lastfield}$\uparrow$.\textit{right}$\leftarrow$ \textit{nil}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{procedure}  \textit{markend} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbeginmarkend} )\\
+\end{tabbing}
+\section{markend}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbeginmarkend}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{3.5cm}{\scriptsize{marks the end of a field}}\'\parbox{14cm}{\textsf{\textbf{procedure}  \textit{markend} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{tokend}$\leftarrow$ \textit{currentchar}}; }\\
+\parbox{14cm}{\textsf{\textit{resolvetoken}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{procedure}  \textit{setalpha} \textit{(} \textit{s} :\textit{textfield} );} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbegin/markendsetalpha} )\\
+\end{tabbing}
+\section{setalpha}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbegin/markendsetalpha}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{setalpha} \textit{(} \textit{s} :\textit{textfield} );}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{lastfield}$\uparrow$.\textit{tag}$\leftarrow$ \textit{$\alpha$}}; }\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{lastfield} \textit{\^{}} .\textit{textual} );}}\\
+\parbox{14cm}{\textsf{\textit{lastfield}$\uparrow$.\textit{textual}$\uparrow$\textit{}$\leftarrow$ \textit{s}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{procedure}  \textit{emptyfield} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbegin/markend/setalphaemptyfield} )\\
+\end{tabbing}
+\section{emptyfield}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbegin/markend/setalphaemptyfield}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{emptyfield} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\\
+\parbox{14cm}{\textsf{\textit{markbegin}}; }\\
+\parbox{14cm}{\textsf{\textit{setalpha} (\textit{\textrm{\textup { `' } }})}; }\\
+\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\\
+\+\textsf{\textbf{procedure}  \textit{parsebarefield} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbegin/markend/setalpha/emptyfieldparsebarefield} )\\
+\end{tabbing}
+\section{parsebarefield}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbegin/markend/setalpha/emptyfieldparsebarefield}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{parsebarefield} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{isoneof} (\textit{}[RSsym, EOFsym, FSsym])} \textbf{ then } \textsf{\textit{emptyfield}}}}\\
+\<\<\parbox{14cm}{\textsf {\textbf {else } \textsf{\textit{begin}} \textbf{ begin } }}\\
+\parbox{14cm}{\textsf{\textit{markbegin}}; }\\
+\<\<\parbox{3.5cm}{\scriptsize{skip over the field}}\'\>\>\parbox{14cm}{\textsf {\textbf {while } \textsf{\textit{haveoneof} (\textit{}[any, space])} \textbf{ do } \textsf{ ;}}}\\
+\parbox{14cm}{\textsf{\textit{markend}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{procedure}  \textit{parsedelimitedfield} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbegin/markend/setalpha/emptyfield/parsebarefieldparsedelimitedfield} )\\
+\end{tabbing}
+\section{parsedelimitedfield}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbegin/markend/setalpha/emptyfield/parsebarefieldparsedelimitedfield}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{parsedelimitedfield} ;}}\\
+\end{tabbing}
+parses a field nested between " chars converting escape chars as it goes
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\\
+\+\parbox{14cm}{\textsf{\textbf{var} }}\\
+\parbox{14cm}{\textsf{\textit{s} : \textit{textfield}}; }\\
+\parbox{14cm}{\textsf{\textit{i} : \textit{integer}}; }\\
+\parbox{14cm}{\textsf{\textit{continue} : \textit{boolean}}; }\\
+\<\textsf{\textbf{procedure}  \textit{appendcurrentchar} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbegin/markend/setalpha/emptyfield/parsebarefield/parsedelimitedfieldappendcurrentchar} )\\
+\end{tabbing}
+\section{appendcurrentchar}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbegin/markend/setalpha/emptyfield/parsebarefield/parsedelimitedfieldappendcurrentchar}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{appendcurrentchar} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{s}$\leftarrow$ \textit{s} + \textbf{chr}(\textit{bp}$\uparrow$\textit{}[currentchar])}; }\\
+\parbox{14cm}{\textsf{\textit{nextsymbol}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{markbegin}}; }\\
+\parbox{14cm}{\textsf{\textit{s}$\leftarrow$ \textit{\textrm{\textup { `' } }}}; }\\
+\parbox{14cm}{\textsf{\textit{continue}$\leftarrow$ \textit{true}}; }\\
+\+\parbox{14cm}{\textsf{\textbf{repeat} }}\\
+\+\parbox{14cm}{\textsf {\textbf {while } \textsf{\textit{isoneof} (\textit{}[FSsym..any])} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{appendcurrentchar}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\<\parbox{3.5cm}{\scriptsize{eat what may be closing quotes}}\'\>\>\parbox{14cm}{\textsf{\textit{have} (\textit{FDsym})}; }\\
+\parbox{14cm}{\textsf{\textit{continue}$\leftarrow$ \textit{peek} (\textit{FDsym}) $\wedge$ (\textit{length} (\textit{s}) $<$ \textit{textlen})}; }\\
+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{continue}} \textbf{ then } \textsf{\textit{appendcurrentchar}}; }}\\
+\-\<\parbox{14cm}{\textsf {\textbf {until } \textsf{(\textbf{not} \textit{continue} )}; }}\\
+\parbox{14cm}{\textsf{\textit{setalpha} (\textit{s})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{procedure}  \textit{parsefield} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbegin/markend/setalpha/emptyfield/parsebarefield/parsedelimitedfield/appendcurrentcharparsefield} )\\
+\end{tabbing}
+\section{parsefield}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbegin/markend/setalpha/emptyfield/parsebarefield/parsedelimitedfield/appendcurrentcharparsefield}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{parsefield} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{have} (\textit{FDsym})} \textbf{ then } \textsf{\textit{parsedelimitedfield}}}}\\
+\<\parbox{14cm}{\textsf {\textbf {else } \textsf{\textit{parsebarefield}}}}\\
+\<\-\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{procedure}  \textit{parserecord} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbegin/markend/setalpha/emptyfield/parsebarefield/parsedelimitedfield/appendcurrentchar/parsefieldparserecord} )\\
+\end{tabbing}
+\section{parserecord}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbegin/markend/setalpha/emptyfield/parsebarefield/parsedelimitedfield/appendcurrentchar/parsefieldparserecord}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{parserecord} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{parsefield}}; }\\
+\parbox{14cm}{\textsf {\textbf {while } \textsf{\textit{have} (\textit{FSsym})} \textbf{ do } \textsf{\textit{parsefield}}; }}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{procedure}  \textit{parseheader} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbegin/markend/setalpha/emptyfield/parsebarefield/parsedelimitedfield/appendcurrentchar/parsefield/parserecordparseheader} )\\
+\end{tabbing}
+\section{parseheader}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbegin/markend/setalpha/emptyfield/parsebarefield/parsedelimitedfield/appendcurrentchar/parsefield/parserecordparseheader}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{parseheader} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\texttt{\small{\{ claim heap space for start of first line \}}}}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{firstrecord} );}}\\
+\parbox{14cm}{\textsf{\textit{lastfield}$\leftarrow$ \textit{firstrecord}}; }\\
+\parbox{14cm}{\textsf{\textit{firstfield}$\leftarrow$ \textit{firstrecord}}; }\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{\textit{firstrecord}$\uparrow$\textit{}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{tag}$\leftarrow$ \textit{linestart}}; }\\
+\parbox{14cm}{\textsf{\textit{down}$\leftarrow$ \textit{nil}}; }\\
+\parbox{14cm}{\textsf{\textit{right}$\leftarrow$ \textit{nil}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{parserecord}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\textsf{\textbf{procedure}  \textit{parsewholefile} ;} (see Section \ref{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbegin/markend/setalpha/emptyfield/parsebarefield/parsedelimitedfield/appendcurrentchar/parsefield/parserecord/parseheaderparsewholefile} )\\
+\end{tabbing}
+\section{parsewholefile}\label{sec:csvfilereader/getdatamatrix/recursedown/recurse/getcolheaders/recurse/getrowheaders/recurse/colcount/getcell/removetrailingnull/onlynulls/rowcount/isint/printcsv/parsecsvfile/thetoken/peek/isoneof/nextsymbol/have/haveoneof/initialise/resolvealpha/resolvedigits/resolvetoken/markbegin/markend/setalpha/emptyfield/parsebarefield/parsedelimitedfield/appendcurrentchar/parsefield/parserecord/parseheaderparsewholefile}
+
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\parbox{14cm}{\textsf{\textbf{procedure}  \textit{parsewholefile} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{parseheader}}; }\\
+\\
+\+\parbox{14cm}{\textsf {\textbf {while } \textsf{\textit{have} (\textit{RSsym})} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\texttt{\small{\{ claim heap space for the start of the new line \}}}}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{firstfield} \textit{\^{}} .\textit{down} );}}\\
+\parbox{14cm}{\textsf{\textit{firstfield}$\leftarrow$ \textit{firstfield}$\uparrow$.\textit{down}}; }\\
+\parbox{14cm}{\textsf{\textit{lastfield}$\leftarrow$ \textit{firstfield}}; }\\
+\+\parbox{14cm}{\textsf {\textbf {with } \textsf{\textit{firstfield}$\uparrow$\textit{}} \textbf{ do } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{tag}$\leftarrow$ \textit{linestart}}; }\\
+\parbox{14cm}{\textsf{\textit{down}$\leftarrow$ \textit{nil}}; }\\
+\parbox{14cm}{\textsf{\textit{right}$\leftarrow$ \textit{nil}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textit{parserecord}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{initialise}}; }\\
+\<\parbox{3.5cm}{\scriptsize{the default case of failure}}\'\>\parbox{14cm}{\textsf{\textit{parsecsvfile}$\leftarrow$ \textit{nil}}; }\\
+\\
+\parbox{14cm}{\textsf{\textit{assign} (\textit{f}, \textit{name})}; }\\
+\<\parbox{3.5cm}{\scriptsize{open file for reading}}\'\>\parbox{14cm}{\textsf{\textit{reset} (\textit{f})}; }\\
+\+\<\parbox{3.5cm}{\scriptsize{ioresult =0 if opened ok}}\'\>\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{ioresult} $=$ 0} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{fs}$\leftarrow$ \textit{filesize} (\textit{f})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{fs} $<$ \textit{maxbuf}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textbf{new} \textit{(} \textit{bp} );}}\\
+\parbox{14cm}{\textsf{\textit{blockread} (\textit{f}, \textit{bp}$\uparrow$\textit{}[1], \textit{fs}, \textit{rc})}; }\\
+\+\parbox{14cm}{\textsf {\textbf {if } \textsf{\textit{rc} $=$ \textit{fs}} \textbf{ then } }}\\
+\<\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{currentchar}$\leftarrow$ 1}; }\\
+\end{tabbing}
+We now have the csv file in memory - parse it
+\begin{tabbing}
+***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=***\=\kill
+\+ \+ \+ \+ \\
+\\
+\parbox{14cm}{\textsf{\textit{parsewholefile}}; }\\
+\parbox{14cm}{\textsf{\textit{removetrailingnull} (\textit{firstrecord})}; }\\
+\parbox{14cm}{\textsf{\textit{parsecsvfile}$\leftarrow$ \textit{firstrecord}}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\parbox{14cm}{\textsf{\textbf{dispose} \textit{(} \textit{bp} );}}\\
+\parbox{14cm}{\textsf{\textit{close} (\textit{f})}; }\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} ;}}\\
+\+\parbox{14cm}{\textsf{\textbf{begin} }}\\
+\parbox{14cm}{\textsf{\textit{categorisor}$\leftarrow$ \textit{any}}; }\\
+\parbox{14cm}{\textsf{\textit{categorisor}$_{\textit{FD}}$$\leftarrow$ \textit{FDsym}}; }\\
+\parbox{14cm}{\textsf{\textit{categorisor}$_{\textit{FS}}$$\leftarrow$ \textit{FSsym}}; }\\
+\parbox{14cm}{\textsf{\textit{categorisor}$_{\textit{RS}}$$\leftarrow$ \textit{RSsym}}; }\\
+\parbox{14cm}{\textsf{\textit{categorisor}$_{\textit{EOI}}$$\leftarrow$ \textit{EOFsym}}; }\\
+\parbox{14cm}{\textsf{\textit{categorisor}$_{\textbf{ord}(\textit{\textrm{\textup { ` ' } }})}$$\leftarrow$ \textit{space}}; }\\
+\parbox{14cm}{\textsf{\textit{categorisor}$_{\textit{CR}}$$\leftarrow$ \textit{space}}; }\\
+\parbox{14cm}{\texttt{\small{\{writeln('fs=',fs,'fd=',fd,'rs=',rs);}}}\\
+\parbox{14cm}{\texttt{\small{writeln(categorisor);\}}}}\\
+\<\-\parbox{14cm}{\textsf{\textbf{end} .}}\\
+\end{tabbing}
