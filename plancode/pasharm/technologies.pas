@@ -276,19 +276,23 @@ end;
 function  defineproductlist(var ct:tc;name:string; p:pproductlist;number:integer):pproductlist;
 var pntr:pproductlist;
 begin
+  {  writeln('defineproductlist ',name,number);{}
 	new(pntr);
 	pntr^.next:=p;
 	pntr^.product:=defineResource(ct,name,number);
 	defineproductlist:=pntr;
+	{writeln('defined');{}
 end;
 
 function  findproduct(var ct:tc;  name:string):presource;
-var h:integer;p:pproductlist;ok:boolean;
+var h,hm:integer;p:pproductlist;ok:boolean;
 begin
+   
 	h:=hash(name) ;
 	with ct do
 	begin
-	    h := h rem index^.max;
+	    hm:= index^.max;
+	    h := h rem hm;
 	         
 		p:=index^[h];
 		ok:= p<>nil;
@@ -304,7 +308,7 @@ begin
 		end;
 		if p=nil then 
 		begin
-		writeln('product ',name,' not found');
+	{	writeln('product ',name,' not found');}
 		exit(401);
 		end;
 		  
@@ -314,13 +318,18 @@ begin
 end;
  
 procedure  addproduct( var ct:tc; name:string;number:integer);
-var h:integer;p:pproductlist;ok:boolean;
+var h,hm:integer;p:pproductlist;ok:boolean;
 begin
+  {  writeln(' add product ', name,number);}
 	h:=hash(name) ;
+	 
 	with ct do
 	begin
-	    h := h rem index^.max;
-	      
+	   
+	   hm:= index^.max;
+       
+	    h := h rem hm;
+	  
 		p:=index^[h];
 		ok:= p<>nil;
 		while ok do 
@@ -332,9 +341,11 @@ begin
 				ok:= p<> nil;
 			end;
 		end;
+		 
 		if p=nil then index^[h]:= defineproductlist(ct,name,index^[h],number);
 		{ if p<>nil then product already defined }
 	end;
+	{writeln('added');}
 end;
 		
 function  buildIndex(var ct:tc;produces:boolean):pdvec ;
@@ -395,11 +406,11 @@ function  buildUserIndex(var ct:tc):pdvec ;	begin builduserindex:= buildindex(ct
 procedure  defineComplex(var ct:tc;numberofproducts:integer);
 var complex:technologycomplex;
 begin
- //  writeln('definecomplex ',numberofproducts);
+  { writeln('definecomplex ',numberofproducts);}
     with ct do
 	begin
 		new(index,(numberofproducts div 2)+1);
-		
+	{	writeln(index^.max);}
 		new (nonproduced, numberofproducts);
 		nonproduced^:=false;
 		new (nonfinal,numberofproducts);

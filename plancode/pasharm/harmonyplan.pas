@@ -354,15 +354,18 @@ begin
 			// add a production technology for each definite product
 			for i:=1 to maxprod do		 
 			begin 
-			   // writeln('product ',i,' has ',countinputsTo(i),' inputs to it ');
+			//    writeln('product ',i,' has ',countinputsTo(i),' inputs to it ');
 				new(inputs,countinputsTo(i));
+				 
 				new(toutputs, 1);			
 				j:=1;
 			    for k:=1 to maxprod +1 do { include labour}
 				begin
+				writeln(k, maxprod+1);
 					if (flows.m^[k][i]>0) then
 					begin
 						flow:=flows.m^[k][i];
+					//	writeln(flow,' flow1');
 						inputs^[j].quantity:= flow;
 						inputs^[j].product:= findproduct(C^,productName(k,year,flownum(k,year)));
 						j:=j+1;
@@ -371,8 +374,10 @@ begin
 						if (caps.m^[k][i]>0)then 
 						begin							 
 							flow:=caps.m^[k ][i ];
+						//	writeln(flow,'flow2');
 						    inputs^[j].quantity:= flow;							
 							inputs^[j].product:=  findproduct(C^,capName(k,i,year ));
+						//	writeln('product found');
 							j:= 1+j;
 						end;
 				end;

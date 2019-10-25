@@ -4,7 +4,7 @@ clean:
 	rm *.asm *.mpu *.lis *.lst *.log *.vwu
 	
 harmonyplan: harmonyplan.pas csvfilereader.pas technologies.pas harmony.pas
-	vpc  harmonyplan   -cpuAVX32 -opt2   -cores2 -L
+	vpc  harmonyplan   -opt0   -cores1 -L
 	
 harmonyplan.pdf: harmonyplan.tex
 	pdflatex harmonyplan.tex
